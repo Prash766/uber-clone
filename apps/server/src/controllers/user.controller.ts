@@ -1,5 +1,5 @@
 import asyncHandler from "../utils/asyncHandler";
-import { prisma } from "@repo/db/src/client";
+import { prisma } from "@repo/db";
 import {
   comparePassword,
   generateAuthToken,
@@ -17,7 +17,7 @@ export const userDetails = Prisma.validator<Prisma.UserSelect>()({
   id: true,
 });
 
-const tokenOptions = {
+export const tokenOptions = {
   path: "/",
   httpOnly: true,
   secure: process.env.NODE_ENV === "production" ? true : false,
