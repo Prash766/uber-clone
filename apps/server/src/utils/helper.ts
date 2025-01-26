@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
+
 function generateAuthToken(payload:{id: number}) {
     const token = jwt.sign(payload , process.env.JWT_SECRET as string , {
     })
