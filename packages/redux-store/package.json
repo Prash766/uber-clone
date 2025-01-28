@@ -1,0 +1,17 @@
+{
+  "name": "@repo/redux-store",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "exports": {
+    ".": "./src/index.ts",
+    "./store": "./src/store.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.5.1",
+    "react-redux": "^9.2.0"
+  }
+}
