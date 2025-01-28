@@ -1,7 +1,8 @@
 {
   "name": "@repo/zod-schema",
   "exports": {
-    ".":"./schema.ts"
+    "./user":"./user.schema.ts",
+    "./captain": "./captain.schema.ts"
   },
   "version": "1.0.0",
   "description": "",

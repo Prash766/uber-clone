@@ -13,6 +13,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum VehicleType{
+  Sedan 
+  SUV
+  Mini
+  Auto
+  Bike
+}
+
+enum Status{
+  active
+  inactive
+}
+
+enum TripStatus{
+  Cancelled
+  Completed
+  Ongoing
+}
+enum Onboarding{
+  pending
+  completed
+}
+
 model User {
   id Int @id @default(autoincrement())
   email String @unique 
@@ -21,4 +44,57 @@ model User {
   lastName String?
   socketId String?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  trips Trip[]
+}
+
+model Captain{
+  id Int @id @default(autoincrement())
+  email String @unique
+  fullName String 
+  password String 
+  socketId String?
+  vehicle Vehicle?
+  status Status @default(inactive)
+  location CaptainLocation?
+  trip Trip[]
+  onboarding Onboarding
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vehicle{
+  id Int @id @default(autoincrement())
+  color String 
+  captainId Int @unique
+  vehicleType VehicleType
+  vehicleNumber String
+  captain Captain @relation(fields: [captainId] , references: [id] , onDelete: Cascade)
+}
+
+model CaptainLocation {
+  id Int @id @default(autoincrement())
+  captainId Int @unique
+  latitude Float
+  Longitude Float 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  captain Captain @relation(fields: [captainId], references: [id] ,onDelete: Cascade)
+}
+
+model Trip {
+  id          Int         @id @default(autoincrement())
+  captainId   Int
+  userId      Int
+  status      TripStatus
+  distance    Float     
+  pickupPoint String     
+  destination String     
+  startTime   DateTime?   
+  endTime     DateTime?  
+  fare        Float?    
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  captain     Captain     @relation(fields: [captainId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
