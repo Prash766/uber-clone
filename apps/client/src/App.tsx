@@ -5,6 +5,7 @@ import SignUp from "./pages/SignUp";
 
 const App = () => {
   return (
+    <>
     <BrowserRouter>
       <NavBar />
       <Routes>
@@ -12,6 +13,7 @@ const App = () => {
         <Route path="/signup" element={<SignUp />} />
       </Routes>
     </BrowserRouter>
+    </>
   );
 };
 

@@ -1,15 +1,17 @@
 import baseConfig from '@repo/tailwind-config';
-
 /** @type {import('tailwindcss').Config} */
 export default {
   ...baseConfig,
   darkMode: ["class"],
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+    "../../packages/ui/src/**/*.{ts,tsx}"
   ],
   prefix: "",
   theme: {
-    ...baseConfig.theme,
     container: {
       center: true,
       padding: "2rem",
@@ -18,9 +20,7 @@ export default {
       },
     },
     extend: {
-      ...baseConfig.theme?.extend,
       colors: {
-        ...baseConfig.theme?.extend?.colors,
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -76,5 +76,5 @@ export default {
       },
     },
   },
-  plugins: [...(baseConfig.plugins || []), require("tailwindcss-animate")],
-};
+  plugins: [import("tailwindcss-animate")],
+}
