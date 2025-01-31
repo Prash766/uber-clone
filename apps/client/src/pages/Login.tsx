@@ -14,7 +14,7 @@ export default function Login() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Login to UberClone</CardTitle>
+          <CardTitle>Login to Uber</CardTitle>
           <CardDescription>Enter your email and password to access your account</CardDescription>
         </CardHeader>
         <CardContent>
@@ -26,6 +26,7 @@ export default function Login() {
               <Input
                 id="email"
                 type="email"
+                className="mt-2"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -33,13 +34,14 @@ export default function Login() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 pt-2">
                 Password
               </label>
               <Input
                 id="password"
                 type="password"
                 placeholder="Enter your password"
+                className="mt-2"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
