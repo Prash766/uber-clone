@@ -2,5 +2,8 @@
 import {configureStore} from '@reduxjs/toolkit';
 
 export const store = configureStore({
-    reducer: {},
+    reducer: {
+        // Define a top-level state field named `counter`, handled by `counterReducer`
+        counter: () => 0,
+    },
     });

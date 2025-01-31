@@ -1,14 +1,18 @@
-import Button from '@repo/ui/button';
+import { NavBar } from "@repo/ui";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 
 const App = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <Button />
-      <p className="p-6 text-center text-white bg-red-600 rounded-lg shadow-lg">
-        This is a styled paragraph with Tailwind CSS!
-      </p>
-    </div>
+    <BrowserRouter>
+      <NavBar />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
