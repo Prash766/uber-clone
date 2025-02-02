@@ -2,7 +2,7 @@ import { NextFunction, Response, Request } from "express";
 import { z,ZodSchema } from "zod";
 const validateSchema = (schema:ZodSchema)=>(req:Request , res:Response, next: NextFunction)=>{
     try {
-        schema.parse(schema)
+        schema.parse(req.body)
          next()
         
     } catch (error) {

@@ -6,6 +6,7 @@ return res.data.user
 }
 
 const signUpUser = async(payload : {email: string , password : string})=>{
+    console.log("inside the signupUsers")
     const res = await axiosClient.post("/user/signup", payload)
     return res.data.user
 }
