@@ -4,6 +4,12 @@
     "baseUrl": ".",
     "rootDir": "./src",
     "outDir": "./dist",
+    "typeRoots": [
+      "./node_modules/@types",
+      "../../packages/@types"
+    ]
+
   },
- 
+
+
 }

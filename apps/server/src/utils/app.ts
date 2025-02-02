@@ -17,7 +17,7 @@ res.send("Hello")
 
 import userRouter from '../routes/user.routes'
 import errorMiddleware from "../middleware/error.middleware"
-app.use('/api/v1', userRouter)
+app.use('/api/v1/user', userRouter)
 
 app.use(errorMiddleware)
 

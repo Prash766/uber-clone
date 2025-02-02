@@ -6,6 +6,7 @@ const errorMiddleware = async (
   err: any,
   req: Request,
   res: Response,
+  next: NextFunction
 ) => {
   let status = 400;
   let message = "Internal Server Error";
@@ -27,7 +28,7 @@ const errorMiddleware = async (
     success: false,
     message,
     errors,
-  });
+  });status
 };
 
 export default errorMiddleware

@@ -99,7 +99,7 @@ const logOutUser = asyncHandler(async (req, res) => {
 
 const getUserProfile = asyncHandler(async (req, res) => {
   try {
-    const { id } = req.user;
+    const {id}  = req.user
     const user = await prisma.user.findUnique({
       where: {
         id: id,
