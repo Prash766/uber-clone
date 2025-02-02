@@ -11,8 +11,15 @@ const signUpUser = async(payload : {email: string , password : string})=>{
     return res.data.user
 }
 
+const verifyUser = async()=>{
+    const res = await axiosClient.get("/user/verify-user")
+    console.log("res ",res)
+    return res
+}
+
 
 export {
     loginUser,
-    signUpUser
+    signUpUser,
+    verifyUser
 }

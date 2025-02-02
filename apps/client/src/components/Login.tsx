@@ -8,7 +8,7 @@ import {
   Input,
   Button,
 } from "@repo/ui";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, replace, useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "../api-client";
@@ -31,7 +31,7 @@ export default function Login() {
     mutationFn: (data: UserLogin) => loginUser(data),
     onSuccess: (response) => {
       console.log("Login Successful:", response);
-      navigate('/ride-booking')
+      navigate('/ride-booking', {replace: true})
     },
     onError: (error) => {
       console.error("Login Failed:", error);

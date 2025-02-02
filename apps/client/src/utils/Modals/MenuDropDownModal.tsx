@@ -15,7 +15,7 @@ const MenuDropDownModal = () => {
       exit={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="absolute top-full left-0 right-0 z-50 bg-white shadow-lg h-screen w-full overflow-hidden"
+      className="absolute top-full left-0 right-0 z-1 bg-white shadow-lg h-screen w-full overflow-hidden"
     >
       {DropDownOptions.map((option, index) => (
         <motion.div

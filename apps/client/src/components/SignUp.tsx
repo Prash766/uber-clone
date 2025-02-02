@@ -37,7 +37,7 @@ export default function Signup() {
     mutationFn: (data: SignUpUser) => signUpUser(data),
     onSuccess: () => {
       toast.success("Signed Up Successffully");
-      navigate('/ride-booking')
+      navigate('/ride-booking',{replace:true})
       
     },
     onError: (error) => {
