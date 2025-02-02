@@ -8,8 +8,7 @@
       "strict": true,
       "skipLibCheck": true,
       "typeRoots": [
-        "../@types",
-        "./node_modules/@types"
+        "../../packages/@types"      
       ]
                                
     }
