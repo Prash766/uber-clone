@@ -117,4 +117,11 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { loginUser, signUpUser, getUserProfile, logOutUser };
+const verifyUser = asyncHandler(async(req , res)=>{
+  return res.status(200).json({
+    success:true,
+    message:"Authenticated"
+  })
+})
+
+export { loginUser, signUpUser, getUserProfile, logOutUser, verifyUser };
