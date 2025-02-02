@@ -1,3 +1,4 @@
+// import {openModal , closeModal} from './slice/authModal'
 export * from '@reduxjs/toolkit';
 export { 
   Provider,
@@ -5,3 +6,10 @@ export {
   useSelector,
   useStore
 } from 'react-redux';
+
+
+
+// export {
+//   openModal,
+//   closeModal
+// }
