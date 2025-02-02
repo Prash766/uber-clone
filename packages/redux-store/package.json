@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./store": "./src/store.ts",
-    "./modal":"./src/slice/Modal.ts"
+    "./modal":"./src/slice/Modal.ts",
+    "./auth":"./src/slice/Auth.ts"
   },
   "keywords": [],
   "author": "",
