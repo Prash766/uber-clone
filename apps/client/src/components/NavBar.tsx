@@ -47,7 +47,7 @@ const NavBar = () => {
   }
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full z-10">
       {/* Navbar */}
       <div className="w-full bg-black text-white p-6 flex justify-between items-center">
         <div className="flex items-center space-x-9 ml-10">
