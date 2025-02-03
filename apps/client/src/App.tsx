@@ -4,6 +4,7 @@ import SignUp from "./components/SignUp";
 import NavBar from "./components/NavBar";
 import RideBooking from "./pages/RideBooking";
 import PrivateRoutes from "./utils/PrivateRoutes";
+import RideBookingRequest from "./pages/RideBookingRequest";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route element={<PrivateRoutes/>}>
         <Route path="ride-booking" element={<RideBooking/>}/>
+        <Route path="request-ride" element={<RideBookingRequest/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

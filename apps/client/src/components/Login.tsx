@@ -12,6 +12,7 @@ import { Link, replace, useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "../api-client";
+import { Loader } from "lucide-react";
 
 type UserLogin = {
   email: string;
@@ -101,8 +102,10 @@ export default function Login() {
                 </small>
               )}
             </div>
-            <Button type="submit" className="w-full mt-6">
-              Login
+            <Button disabled={mutation.isPending} type="submit" className="w-full mt-6">
+              {mutation.isPending ? (
+                <Loader className="animate-spin"/>
+              ) : "Login"}
             </Button>
           </form>
         </CardContent>
