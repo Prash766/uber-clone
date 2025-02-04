@@ -5,6 +5,7 @@ import NavBar from "./components/NavBar";
 import RideBooking from "./pages/RideBooking";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import RideBookingRequest from "./pages/RideBookingRequest";
+import Footer from "./components/Footer";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="request-ride" element={<RideBookingRequest/>}/>
         </Route>
       </Routes>
+      <Footer/>
     </BrowserRouter>
     </>
   );

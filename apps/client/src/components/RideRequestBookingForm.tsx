@@ -20,8 +20,8 @@ const suggestions: DestinationSuggestion[] = [
 
 export default function RideRequestForm() {
   return (
-    <div className="w-full max-w-md p-4">
-      <h1 className="text-3xl font-uberFont font-semibold mb-8">Request a ride</h1>
+    <div className="max-w-md p-4 md: container mx-auto md:max-w-7xl  w-full ">
+      <h1 className="text-[33px]  font-bold mb-8">Request a ride</h1>
 
       <div className="relative space-y-4">
         <div className="relative">

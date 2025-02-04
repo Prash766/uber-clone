@@ -27,7 +27,7 @@ const suggestions: SuggestionItem[] = [
 export default function Suggestions() {
   return (
     <div className=" space-y-4 w-full mt-4">
-      <h2 className="text-xl font-semibold ml-10">Suggestions</h2>
+      <h2 className="text-xl font-semibold ml-10 md:ml-14">Suggestions</h2>
 
       <div className="flex flex-col items-center justify-center space-y-2">
         {suggestions.map((item, index) => (
