@@ -25,13 +25,13 @@ export default function RideRequestForm() {
 
       <div className="relative space-y-4">
         <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground " />
+          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black " />
           <Input className="h-14 pl-9 bg-muted/50 rounded-xl" placeholder="Enter location" />
         </div>
 
 
         <div className="relative">
-          <Circle className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground " />
+          <Circle className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black " />
           <Input className="h-14 pl-9 bg-muted/50 rounded-xl" placeholder="Enter destination" />
         </div>
 
