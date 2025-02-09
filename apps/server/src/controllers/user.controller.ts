@@ -46,8 +46,9 @@ const loginUser = asyncHandler(async (req, res, next) => {
       user: filteredUser,
     });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
-      success: true,
+      success: false,
       message: "Internal Server Error",
     });
   }

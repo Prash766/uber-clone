@@ -16,8 +16,12 @@ res.send("Hello")
 })
 
 import userRouter from '../routes/user.routes'
+import captainRouter from '../routes/captain.routes'
+import locationRouter from '../routes/location.routes'
 import errorMiddleware from "../middleware/error.middleware"
 app.use('/api/v1/user', userRouter)
+app.use('/api/v1/captain',captainRouter)
+app.use('/api/v1/location',locationRouter)
 
 app.use(errorMiddleware)
 
