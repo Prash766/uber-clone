@@ -2,7 +2,7 @@ import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react"
 import { Link } from "react-router-dom"
 const Footer = () => {
   return (
-    <footer className="w-full bg-black text-white py-16 mt-32">
+    <footer className="hidden md:block w-full md:bg-black md:text-white md:py-16 md:mt-32">
       <div className="container mx-auto max-w-7xl px-4">
         <div className="mb-16">
           <h2 className="text-[22px] font-medium mb-6">Uber</h2>

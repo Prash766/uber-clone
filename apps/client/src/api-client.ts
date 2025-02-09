@@ -17,9 +17,18 @@ const verifyUser = async()=>{
     return res
 }
 
+const getListOfPlaces = async(queryPlace:string)=>{
+    const res = await axiosClient.post("/location/locationSearch",{
+        queryPlace
+    })
+    console.log("RES",res)
+    return res.data
+}
+
 
 export {
     loginUser,
     signUpUser,
-    verifyUser
+    verifyUser,
+    getListOfPlaces
 }
