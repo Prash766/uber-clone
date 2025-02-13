@@ -8,7 +8,8 @@
     "./store": "./src/store.ts",
     "./modal":"./src/slice/Modal.ts",
     "./auth":"./src/slice/Auth.ts",
-    "./user_location":"./src/slice/Location.ts"
+    "./user_location":"./src/slice/Location.ts",
+    "./ride":"./src/slice/Ride.ts"
   },
   "keywords": [],
   "author": "",

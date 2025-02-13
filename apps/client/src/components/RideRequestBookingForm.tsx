@@ -3,9 +3,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Circle, Clock, MapPin } from "lucide-react"
 import { useMutation } from "@tanstack/react-query"
 import { getListOfPlaces } from "../api-client"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { debounce } from "lodash"
 import PlaceSuggestDropdown from "./ui/PlaceSuggestDropDown/PlaceSuggestDropdown"
+import { useDispatch } from "@repo/redux-store"
+import {setDestinationList, setPickUpList} from "@repo/redux-store/ride"
 
 interface DestinationSuggestion {
   name: string
@@ -14,32 +16,63 @@ interface DestinationSuggestion {
 
 export default function RideRequestForm() {
   const [pickupLocation, setPickupLocation] = useState<string>("")
+  const dispatch = useDispatch()
   const [destinationLocation, setDestinationLocation] = useState<string>("")
-  const [suggestions, setSuggestions] = useState<DestinationSuggestion[]>([])
-  const [activeField, setActiveField] = useState<"pickup" | "destination" | null>(null)
   const [activeInput,setActiveInput] = useState<null | "pickup" | "destination">(null) 
+  const formRef = useRef<HTMLDivElement>(null)
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ["placesList"],
     mutationFn: async (query: string) => {
       if (!query) return []
-      return getListOfPlaces(query)
+      if(activeInput){
+        if(activeInput==="pickup"){
+          return getListOfPlaces(pickupLocation)
+        }else{
+          return getListOfPlaces(destinationLocation)
+        }
+      }
     },
     onSuccess: (data) => {
-      setSuggestions(data) 
+      console.log("data",data)
+if(activeInput){
+  if(activeInput==="pickup"){
+    dispatch(setPickUpList(data))
+
+  }
+  else{
+    dispatch(setDestinationList(data))
+
+  }
+}
     },
   })
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (formRef.current && !formRef.current.contains(event.target as Node)) {
+        setActiveInput(null) 
+      }
+    }
+
+    document.addEventListener("click", handleClickOutside)
+    return () => {
+      document.removeEventListener("click", handleClickOutside)
+    }
+  }, [])
+
+
   const handleInputChange = useCallback(
     debounce((value: string, field: "pickup" | "destination") => {
-      setActiveField(field)
       mutate(value)
     }, 300), 
     []
   )
 
   return (
-    <div className="max-w-md p-4 md:container mx-auto md:max-w-7xl w-full">
+    <div
+    ref={formRef} 
+    className="max-w-md p-4 md:container mx-auto md:max-w-7xl w-full">
       <h1 className="text-[33px] font-bold mb-8">Request a ride</h1>
 
       <div className="relative space-y-4">
@@ -56,7 +89,7 @@ export default function RideRequestForm() {
             placeholder="Enter location"
           />
           {
-            activeInput==="pickup"? <PlaceSuggestDropdown/>: null
+            activeInput==="pickup"? <PlaceSuggestDropdown isPending = {isPending} locationType={"pickup"}/>: null
           }
         </div>
         <div className="relative">
@@ -72,7 +105,7 @@ export default function RideRequestForm() {
             placeholder="Enter destination"
           />
            {
-            activeInput==="destination"? <PlaceSuggestDropdown/>: null
+            activeInput==="destination"? <PlaceSuggestDropdown isPending={isPending} locationType={"destination"}/>: null
           }
         </div>
 
@@ -100,37 +133,7 @@ export default function RideRequestForm() {
           </Select>
         </div>
 
-        {suggestions.length > 0 && (
-          <div className="pt-10">
-            <h2 className="text-sm font-medium mb-3">
-              {activeField === "pickup" ? "Pickup Suggestions" : "Destination Suggestions"}
-            </h2>
-            <div className="space-y-2">
-              {suggestions.map((suggestion, index) => (
-                <Card
-                  key={index}
-                  className="p-4 cursor-pointer hover:bg-muted/50 transition-colors duration-200"
-                  onClick={() => {
-                    if (activeField === "pickup") {
-                      setPickupLocation(suggestion.name)
-                    } else {
-                      setDestinationLocation(suggestion.name)
-                    }
-                    setSuggestions([]) // Clear suggestions on selection
-                  }}
-                >
-                  <div className="flex gap-4">
-                    <Clock className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium leading-snug">{suggestion.name}</p>
-                      <p className="text-sm text-muted-foreground mt-0.5">{suggestion.address}</p>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
+      
 
         <Button className="w-full bg-black text-white hover:bg-black/90 h-12 text-base font-medium rounded-xl">
           See prices

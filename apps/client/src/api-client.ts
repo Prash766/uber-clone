@@ -22,7 +22,7 @@ const getListOfPlaces = async(queryPlace:string)=>{
         queryPlace
     })
     console.log("RES",res)
-    return res.data
+    return res.data.data
 }
 
 

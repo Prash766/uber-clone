@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import {authModalReducer, dropdownMenuModalReducer } from "../src/slice/Modal";
 import authUserReducer from '../src/slice/Auth'
 import userLocationReducer from '../src/slice/Location'
-import {placeListReducer} from '../src/slice/Ride'
+import {placeListReducer, rideLocationReducer} from '../src/slice/Ride'
 
 export const store = configureStore({
   reducer: {
@@ -10,7 +10,8 @@ export const store = configureStore({
     dropdownMenuModalReducer,
     authUserReducer,
     userLocationReducer,
-    placeListReducer
+    placeListReducer,
+    rideLocationReducer
   
   },
 });

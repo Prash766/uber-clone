@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface PlacesType {
+export interface PlacesType {
   place_id: number;
   osm_id: number;
   lat: string;
@@ -11,6 +11,17 @@ interface PlacesType {
   name: string;
   display_name: string;
   boundingbox: string[];
+}
+
+export interface Location {
+    lat : number | null,
+    long : number | null
+}
+
+export interface RideLocation {
+    pickupLocation: Location,
+    destinationLocation: Location,
+
 }
 
 interface PlacesList {
@@ -34,5 +45,29 @@ const placesListSlice = createSlice({
   },
 });
 
+const rideLocationSlice = createSlice({
+    name: 'ride',
+    initialState: {
+      pickupLocation: {
+        lat: null,
+        long: null
+      },
+      destinationLocation: {
+        lat: null,
+        long: null
+      },
+    } as RideLocation,
+    reducers: {
+      setPickupLocation: (state, action) => {
+        state.pickupLocation = action.payload;
+      },
+      setDestinationLocation: (state, action) => {
+        state.destinationLocation = action.payload;
+      },
+    }
+  });
+  
 export const { setPickUpList, setDestinationList } = placesListSlice.actions;
+export const {setPickupLocation , setDestinationLocation} = rideLocationSlice.actions
 export const placeListReducer  = placesListSlice.reducer;
+export const rideLocationReducer= rideLocationSlice.reducer
