@@ -1,4 +1,4 @@
-import { Utensils } from "lucide-react";
+import { Palette, Utensils } from "lucide-react";
 import { motion } from "framer-motion";
 import { PlacesType } from "@repo/redux-store/ride";
 import { useDispatch } from "@repo/redux-store";
@@ -6,10 +6,16 @@ import { setPickupLocation, setDestinationLocation } from "@repo/redux-store/rid
 
 const PlaceSuggestionItem = ({ 
   place, 
-  locationType 
+  locationType ,
+  setDestinationPlace,
+  setPickupPlace,
+  isOpen
 }: { 
+    isOpen: ()=> void,
   place: PlacesType;
   locationType: "pickup" | "destination";
+  setDestinationPlace  : (destination : string)=> void,
+  setPickupPlace : (pickup: string )=> void
 }) => {
   const dispatch = useDispatch();
 
@@ -18,11 +24,14 @@ const PlaceSuggestionItem = ({
       lat: Number(place.lat),
       long: Number(place.lon)
     };
-
     if (locationType === "pickup") {
-      dispatch(setPickupLocation(position));
+        setPickupPlace(place.display_name)
+        dispatch(setPickupLocation(position));
+        isOpen()
     } else {
       dispatch(setDestinationLocation(position));
+      setDestinationPlace(place.display_name)
+      isOpen()
     }
   };
 

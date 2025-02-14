@@ -1,18 +1,36 @@
-import { useSelector } from "@repo/redux-store"
-import PlaceSuggestionItem from "./PlaceSuggestionItem"
-import { motion } from "framer-motion"
-import { RootState } from "@repo/redux-store/store"
-import { useEffect, useState } from "react"
+import { useSelector } from "@repo/redux-store";
+import PlaceSuggestionItem from "./PlaceSuggestionItem";
+import { motion } from "framer-motion";
+import { RootState } from "@repo/redux-store/store";
+import { useEffect, useState } from "react";
 
-const PlaceSuggestDropdown = ({ locationType, isPending }: { locationType: "pickup" | "destination"; isPending: boolean }) => {
-  const { pickUpPlacesList, destinationPlacesList } = useSelector((state: RootState) => state.placeListReducer)
-  const [places, setPlaces] = useState<typeof pickUpPlacesList | typeof destinationPlacesList>([])
+const PlaceSuggestDropdown = ({
+  setDestinationLocation,
+  setPickupLocation,
+  locationType,
+  isPending,
+  isOpen
+}: {
+  setPickupLocation: (pickup: string) => void;
+  setDestinationLocation: (destination: string) => void;
+  locationType: "pickup" | "destination";
+  isPending: boolean;
+  isOpen  : ()=> void
+}) => {
+  const { pickUpPlacesList, destinationPlacesList } = useSelector(
+    (state: RootState) => state.placeListReducer
+  );
+  const [places, setPlaces] = useState<
+    typeof pickUpPlacesList | typeof destinationPlacesList
+  >([]);
 
   useEffect(() => {
     if (!isPending) {
-      setPlaces(locationType === "pickup" ? pickUpPlacesList : destinationPlacesList)
+      setPlaces(
+        locationType === "pickup" ? pickUpPlacesList : destinationPlacesList
+      );
     }
-  }, [isPending, pickUpPlacesList, destinationPlacesList, locationType])
+  }, [isPending, pickUpPlacesList, destinationPlacesList, locationType]);
 
   return (
     <motion.div
@@ -25,13 +43,22 @@ const PlaceSuggestDropdown = ({ locationType, isPending }: { locationType: "pick
         {isPending ? (
           <p className="text-center py-2">Loading...</p>
         ) : places.length > 0 ? (
-          places.map((item, index) => <PlaceSuggestionItem key={index} place={item} locationType={locationType} />)
+          places.map((item, index) => (
+            <PlaceSuggestionItem
+              setDestinationPlace={setDestinationLocation}
+              setPickupPlace={setPickupLocation}
+              key={index}
+              place={item}
+              locationType={locationType}
+              isOpen = {isOpen}
+            />
+          ))
         ) : (
           <p className="text-center py-2">No results found</p>
         )}
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default PlaceSuggestDropdown
+export default PlaceSuggestDropdown;

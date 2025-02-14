@@ -74,11 +74,15 @@ const Routing = ({
 
   useEffect(() => {
     if (!map || !pickupLocation?.lat || !destinationLocation?.lat) return;
-
+  
     if (routingControl) {
-      map.removeControl(routingControl);
+      try {
+        map.removeControl(routingControl);
+      } catch (error) {
+        console.warn("Routing control already removed:", error);
+      }
     }
-
+  
     const control = L.Routing.control({
       waypoints: [
         L.latLng(pickupLocation.lat, pickupLocation.long),
@@ -108,21 +112,26 @@ const Routing = ({
       fitSelectedRoutes: true,
       showAlternatives: false
     }).addTo(map);
-
+  
     setRoutingControl(control);
-
+  
     const bounds = L.latLngBounds(
       [pickupLocation.lat, pickupLocation.long],
       [destinationLocation.lat, destinationLocation.long]
     );
     map.fitBounds(bounds, { padding: [50, 50] });
-
+  
     return () => {
       if (control) {
-        map.removeControl(control);
+        try {
+          map.removeControl(control);
+        } catch (error) {
+          console.warn("Failed to remove routing control:", error);
+        }
       }
     };
   }, [map, pickupLocation, destinationLocation]);
+  
 
   return null;
 };
@@ -318,20 +327,9 @@ const Map = () => {
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     
-                    {/* User marker */}
-                    <Marker position={[location.lat, location.long]} icon={userIcon}>
-                      <Popup>
-                        <div className="font-medium mb-1">Your Current Location</div>
-                        <div className="text-gray-600">
-                          Latitude: {location.lat.toFixed(6)}
-                          <br />
-                          Longitude: {location.long.toFixed(6)}
-                        </div>
-                      </Popup>
-                    </Marker>
 
                     {/* Pickup marker */}
-                    {pickupLocation && pickupLocation.lat !== null && pickupLocation.long !== null && (
+                    {(pickupLocation && pickupLocation.lat !== null && pickupLocation.long !== null && pickupLocation.lat!== location.lat && pickupLocation.long !== location.long) ? (
                       <Marker 
                         position={[pickupLocation.lat, pickupLocation.long]}
                         icon={pickupIcon}
@@ -340,7 +338,18 @@ const Map = () => {
                           <div className="font-medium">Pickup Location</div>
                         </Popup>
                       </Marker>
-                    )}
+                    ):
+                    <Marker position={[location.lat, location.long]} icon={userIcon}>
+                    <Popup>
+                      <div className="font-medium mb-1">Your Current Location</div>
+                      <div className="text-gray-600">
+                        Latitude: {location.lat.toFixed(6)}
+                        <br />
+                        Longitude: {location.long.toFixed(6)}
+                      </div>
+                    </Popup>
+                  </Marker> 
+                    }
 
                     {/* Destination marker */}
                     {destinationLocation && destinationLocation.lat !== null && destinationLocation.long !== null && (
