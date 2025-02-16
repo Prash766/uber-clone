@@ -20,16 +20,16 @@ const PlaceSuggestionItem = ({
   const dispatch = useDispatch();
 
   const handleClick = () => {
-    const position = {
-      lat: Number(place.lat),
-      long: Number(place.lon)
-    };
+    // const position = {
+    //   lat: Number(place.lat),
+    //   lon: Number(place.lon)
+    // };
     if (locationType === "pickup") {
         setPickupPlace(place.display_name)
-        dispatch(setPickupLocation(position));
+        dispatch(setPickupLocation(place));
         isOpen()
     } else {
-      dispatch(setDestinationLocation(position));
+      dispatch(setDestinationLocation(place));
       setDestinationPlace(place.display_name)
       isOpen()
     }

@@ -3,8 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface PlacesType {
   place_id: number;
   osm_id: number;
-  lat: string;
-  lon: string;
+  lat: number| null;
+  lon: number | null;
   class: string;
   type: string;
   addresstype: string;
@@ -15,12 +15,12 @@ export interface PlacesType {
 
 export interface Location {
     lat : number | null,
-    long : number | null
+    lon : number | null
 }
 
 export interface RideLocation {
-    pickupLocation: Location,
-    destinationLocation: Location,
+    pickupLocation: PlacesType,
+    destinationLocation: PlacesType,
 
 }
 
@@ -49,12 +49,30 @@ const rideLocationSlice = createSlice({
     name: 'ride',
     initialState: {
       pickupLocation: {
+        place_id: 0,
+        osm_id: 0,
         lat: null,
-        long: null
+        lon: null,
+        class: "",
+        type: "",
+        addresstype: "",
+        name: "",
+        display_name: "",
+        boundingbox: [],
+
       },
       destinationLocation: {
+        place_id: 0,
+        osm_id: 0,
         lat: null,
-        long: null
+        lon: null,
+        class: "",
+        type: "",
+        addresstype: "",
+        name: "",
+        display_name: "",
+        boundingbox: [],
+      
       },
     } as RideLocation,
     reducers: {
@@ -66,6 +84,23 @@ const rideLocationSlice = createSlice({
       },
     }
   });
+
+
+// const rideBookingLocationEntrySlice =createSlice({
+//   name:"rideBookingLocationEntrySlice",
+//   initialState:{
+//     pickupLocation : "",
+//     destinationLocation :""
+//   },
+//   reducers:{
+//     setPickUpLocation :(state, action)=>{
+//       state.pickupLocation= action.payload
+//     },
+//     setDestinationLocation: (state , action)=>{
+//       state.destinationLocation= action.payload
+//     }
+//   }
+// })
   
 export const { setPickUpList, setDestinationList } = placesListSlice.actions;
 export const {setPickupLocation , setDestinationLocation} = rideLocationSlice.actions
