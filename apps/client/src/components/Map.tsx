@@ -1,5 +1,12 @@
-import { useState, useEffect } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap, Circle } from "react-leaflet";
+import { useState, useEffect, useRef } from "react";
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+  Circle,
+} from "react-leaflet";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, AlertTriangle, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@repo/ui";
@@ -7,15 +14,16 @@ import { Alert, AlertTitle, AlertDescription } from "@repo/ui";
 import { useDispatch, useSelector } from "@repo/redux-store";
 import { setUserLocation } from "@repo/redux-store/user_location";
 import { RootState } from "@repo/redux-store/store";
-import L from 'leaflet';
-import 'leaflet-routing-machine';
-import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
-import 'leaflet/dist/leaflet.css';
+import L from "leaflet";
+import "leaflet-routing-machine";
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+import "leaflet/dist/leaflet.css";
+import { createTimeMarkerIcon } from "./ui/TimeMarkerIcon";
 
-// Define marker icons
+
 const createIcon = (color: string) => {
   return L.divIcon({
-    className: 'custom-icon',
+    className: "custom-icon",
     html: `
       <svg width="24" height="36" viewBox="0 0 24 36" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 24 12 24s12-15 12-24c0-6.63-5.37-12-12-12z" fill="${color}"/>
@@ -24,13 +32,13 @@ const createIcon = (color: string) => {
     `,
     iconSize: [24, 36],
     iconAnchor: [12, 36],
-    popupAnchor: [0, -36]
+    popupAnchor: [0, -36],
   });
 };
 
-const userIcon = createIcon('#2563eb');
-const pickupIcon = createIcon('#10B981');
-const destinationIcon = createIcon('#EF4444');
+const userIcon = createIcon("#2563eb");
+const pickupIcon = createIcon("#10B981");
+const destinationIcon = createIcon("#EF4444");
 
 const Skeleton = () => (
   <div className="space-y-4 w-full">
@@ -39,133 +47,162 @@ const Skeleton = () => (
   </div>
 );
 
-const AccuracyCircle = ({ 
-  position, 
-  accuracy 
-}: { 
-  position: [number, number]; 
+const AccuracyCircle = ({
+  position,
+  accuracy,
+}: {
+  position: [number, number];
   accuracy: number;
 }) => {
   const circleOptions = {
-    color: '#2563eb',
+    color: "#2563eb",
     weight: 1,
-    fillColor: '#60a5fa',
+    fillColor: "#60a5fa",
     fillOpacity: 0.15,
   };
 
   return (
-    <Circle
-      center={position}
-      radius={accuracy}
-      pathOptions={circleOptions}
-    />
+    <Circle center={position} radius={accuracy} pathOptions={circleOptions} />
   );
 };
 
-const Routing = ({ 
-  pickupLocation, 
-  destinationLocation 
-}: { 
-  pickupLocation: { lat: number; long: number }; 
-  destinationLocation: { lat: number; long: number };
+const Routing = ({
+  pickupLocation,
+  destinationLocation,
+}: {
+  pickupLocation: { lat: number; lon: number ; display_name: string };
+  destinationLocation: { lat: number; lon: number , display_name: string };
 }) => {
   const map = useMap();
   const [routingControl, setRoutingControl] = useState<L.Routing.Control | null>(null);
-
+  const [timeMarkers, setTimeMarkers] = useState<L.Marker[]>([]);
+  
   useEffect(() => {
-    if (!map || !pickupLocation?.lat || !destinationLocation?.lat) return;
-  
+    if (!map || !pickupLocation || !destinationLocation) return;
+
+    // Clear existing time markers
+    timeMarkers.forEach(marker => marker.remove());
+
     if (routingControl) {
-      try {
-        map.removeControl(routingControl);
-      } catch (error) {
-        console.warn("Routing control already removed:", error);
-      }
+      map.removeControl(routingControl);
     }
-  
+
     const control = L.Routing.control({
       waypoints: [
-        L.latLng(pickupLocation.lat, pickupLocation.long),
-        L.latLng(destinationLocation.lat, destinationLocation.long)
+        L.latLng(pickupLocation.lat, pickupLocation.lon),
+        L.latLng(destinationLocation.lat, destinationLocation.lon),
       ],
       router: L.Routing.osrmv1({
-        serviceUrl: 'https://router.project-osrm.org/route/v1'
+        serviceUrl: "https://router.project-osrm.org/route/v1",
       }),
       plan: L.Routing.plan(
         [
-          L.latLng(pickupLocation.lat, pickupLocation.long),
-          L.latLng(destinationLocation.lat, destinationLocation.long)
+          L.latLng(pickupLocation.lat, pickupLocation.lon),
+          L.latLng(destinationLocation.lat, destinationLocation.lon),
         ],
         {
-          createMarker: function() { return false; },
+          createMarker: function () {
+            return false;
+          },
           draggableWaypoints: false,
-          addWaypoints: false
+          addWaypoints: false,
         }
       ),
       lineOptions: {
-        styles: [{ color: '#2563eb', opacity: 0.8, weight: 4 }],
+        styles: [{ color: "#2563eb", opacity: 0.8, weight: 4 }],
         extendToWaypoints: true,
-        missingRouteTolerance: 0
+        missingRouteTolerance: 0,
       },
       show: false,
       addWaypoints: false,
       fitSelectedRoutes: true,
-      showAlternatives: false
+      showAlternatives: false,
     }).addTo(map);
-  
+
+    // Handle route calculation complete
+    control.on('routesfound', function(e) {
+      const routes = e.routes;
+      if (routes.length > 0) {
+        const route = routes[0];
+        const duration = Math.round(route.summary.totalTime / 60);
+        
+        // Create time markers at both ends
+        const pickupMarker = L.marker(
+          [pickupLocation.lat, pickupLocation.lon],
+          {
+            icon: createTimeMarkerIcon(`${duration}`, `${pickupLocation.display_name}` , "pickup")
+          }
+        ).addTo(map);
+
+        const destMarker = L.marker(
+          [destinationLocation.lat, destinationLocation.lon],
+          {
+            icon: createTimeMarkerIcon(`${duration}`, `${destinationLocation.display_name}`, "destination")
+          }
+        ).addTo(map);
+
+        setTimeMarkers([pickupMarker, destMarker]);
+      }
+    });
+
     setRoutingControl(control);
-  
+
     const bounds = L.latLngBounds(
-      [pickupLocation.lat, pickupLocation.long],
-      [destinationLocation.lat, destinationLocation.long]
+      [pickupLocation.lat, pickupLocation.lon],
+      [destinationLocation.lat, destinationLocation.lon]
     );
     map.fitBounds(bounds, { padding: [50, 50] });
-  
+
     return () => {
+      timeMarkers.forEach(marker => marker.remove());
       if (control) {
-        try {
-          map.removeControl(control);
-        } catch (error) {
-          console.warn("Failed to remove routing control:", error);
-        }
+        map.removeControl(control);
       }
     };
   }, [map, pickupLocation, destinationLocation]);
-  
 
   return null;
 };
 
-const RecenterMap = ({ 
-  userLocation, 
-  pickupLocation, 
-  destinationLocation 
-}: { 
-  userLocation: any;
-  pickupLocation?: any;
-  destinationLocation?: any;
+const RecenterMap = ({
+  userLocation,
+  pickupLocation,
+  destinationLocation,
+}: {
+  userLocation: { lat: number; long: number } | null;
+  pickupLocation: { lat: number; lon: number } | null;
+  destinationLocation: { lat: number; lon: number } | null;
 }) => {
   const map = useMap();
+  const prevPickup = useRef<{ lat: number; lon: number } | null>(null);
 
   useEffect(() => {
-    if (pickupLocation && destinationLocation) {
+    if (!map) return;
+
+    if (pickupLocation && !destinationLocation) {
+      if (
+        !prevPickup.current ||
+        prevPickup.current.lat !== pickupLocation.lat ||
+        prevPickup.current.lon !== pickupLocation.lon
+      ) {
+        map.flyTo([pickupLocation.lat, pickupLocation.lon], 14, {
+          duration: 1.5,
+        });
+        prevPickup.current = pickupLocation;
+      }
+    } else if (pickupLocation && destinationLocation) {
       const bounds = L.latLngBounds(
-        L.latLng(pickupLocation.lat, pickupLocation.long),
-        L.latLng(destinationLocation.lat, destinationLocation.long)
+        L.latLng(pickupLocation.lat, pickupLocation.lon),
+        L.latLng(destinationLocation.lat, destinationLocation.lon)
       );
-      
-      if (userLocation?.lat && userLocation?.long) {
+
+      if (userLocation) {
         bounds.extend(L.latLng(userLocation.lat, userLocation.long));
       }
-      
-      map.fitBounds(bounds, { 
-        padding: [50, 50],
-        maxZoom: 17
-      });
-    } else if (pickupLocation) {
-      map.setView([pickupLocation.lat, pickupLocation.long], 17);
-    } else if (userLocation?.lat && userLocation?.long) {
-      map.setView([userLocation.lat, userLocation.long], 17);
+
+      map.fitBounds(bounds, { padding: [60, 60], maxZoom: 17});
+    } else if (userLocation && !pickupLocation) {
+      map.setView([userLocation.lat, userLocation.long], 17, { duration: 1.5 });
     }
   }, [map, userLocation, pickupLocation, destinationLocation]);
 
@@ -173,13 +210,17 @@ const RecenterMap = ({
 };
 
 const Map = () => {
-  const { location } = useSelector((state: RootState) => state.userLocationReducer);
-  const { pickupLocation, destinationLocation } = useSelector((state: RootState) => state.rideLocationReducer);
+  const { location } = useSelector(
+    (state: RootState) => state.userLocationReducer
+  );
+  const { pickupLocation, destinationLocation } = useSelector(
+    (state: RootState) => state.rideLocationReducer
+  );
   const dispatch = useDispatch();
   const [error, setError] = useState<string | null>(null);
   const [watchId, setWatchId] = useState<number | null>(null);
   const ACCURACY_THRESHOLD = 20;
-  const RETRY_DELAY = 10000;
+  const RETRY_DELAY = 1*60*1000;
 
   const startLocationWatch = () => {
     if (!navigator.geolocation) {
@@ -242,10 +283,11 @@ const Map = () => {
     };
   }, []);
 
-  const hasValidLocation = location && 
-    typeof location.lat === 'number' && 
-    typeof location.long === 'number' && 
-    typeof location.accuracy === 'number';
+  const hasValidLocation =
+    location &&
+    typeof location.lat === "number" &&
+    typeof location.long === "number" &&
+    typeof location.accuracy === "number";
 
   return (
     <Card className="w-full max-w-5xl lg:h-[576px] mx-auto mt-10 overflow-hidden shadow-lg">
@@ -295,7 +337,8 @@ const Map = () => {
                     <Loader2 className="h-4 w-4 animate-spin" />
                     <AlertTitle>Improving Location Accuracy</AlertTitle>
                     <AlertDescription>
-                      Current accuracy: {location.accuracy ? Math.round(location.accuracy) : 0}m
+                      Current accuracy:{" "}
+                      {location.accuracy ? Math.round(location.accuracy) : 0}m
                     </AlertDescription>
                   </Alert>
                 ) : (
@@ -303,7 +346,8 @@ const Map = () => {
                     <CheckCircle className="h-4 w-4" />
                     <AlertTitle>High Accuracy Location Acquired</AlertTitle>
                     <AlertDescription>
-                      Accuracy: {location.accuracy ? Math.round(location.accuracy) : 0}m
+                      Accuracy:{" "}
+                      {location.accuracy ? Math.round(location.accuracy) : 0}m
                     </AlertDescription>
                   </Alert>
                 )}
@@ -326,60 +370,100 @@ const Map = () => {
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    
 
                     {/* Pickup marker */}
-                    {(pickupLocation && pickupLocation.lat !== null && pickupLocation.long !== null && pickupLocation.lat!== location.lat && pickupLocation.long !== location.long) ? (
-                      <Marker 
-                        position={[pickupLocation.lat, pickupLocation.long]}
+                    {pickupLocation &&
+                    pickupLocation.lat !== null &&
+                    pickupLocation.lon !== null &&
+                    pickupLocation.lat !== location.lat &&
+                    pickupLocation.lon !== location.long ? (
+                      <Marker
+                        position={[pickupLocation.lat, pickupLocation.lon]}
                         icon={pickupIcon}
                       >
                         <Popup>
                           <div className="font-medium">Pickup Location</div>
                         </Popup>
                       </Marker>
-                    ):
-                    <Marker position={[location.lat, location.long]} icon={userIcon}>
-                    <Popup>
-                      <div className="font-medium mb-1">Your Current Location</div>
-                      <div className="text-gray-600">
-                        Latitude: {location.lat.toFixed(6)}
-                        <br />
-                        Longitude: {location.long.toFixed(6)}
-                      </div>
-                    </Popup>
-                  </Marker> 
-                    }
-
-                    {/* Destination marker */}
-                    {destinationLocation && destinationLocation.lat !== null && destinationLocation.long !== null && (
-                      <Marker 
-                        position={[destinationLocation.lat, destinationLocation.long]}
-                        icon={destinationIcon}
+                    ) : (
+                      <Marker
+                        position={[location.lat, location.long]}
+                        icon={userIcon}
                       >
                         <Popup>
-                          <div className="font-medium">Destination</div>
+                          <div className="font-medium mb-1">
+                            Your Current Location
+                          </div>
+                          <div className="text-gray-600">
+                            Latitude: {location.lat.toFixed(6)}
+                            <br />
+                            Longitude: {location.long.toFixed(6)}
+                          </div>
                         </Popup>
                       </Marker>
                     )}
 
-                    <AccuracyCircle 
-                      position={[location.lat, location.long]}
-                      accuracy={location.accuracy || 0}
-                    />
-                    
-                    {/* Add routing when both locations are available */}
-                    {pickupLocation?.lat && pickupLocation.long && destinationLocation?.lat && destinationLocation.long && (
-                      <Routing 
-                        pickupLocation={pickupLocation as { lat: number; long: number }}
-                        destinationLocation={destinationLocation as { lat: number; long: number }}
-                      />
-                    )}
+                    {/* Destination marker */}
+                    {destinationLocation &&
+                      destinationLocation.lat !== null &&
+                      destinationLocation.lon !== null && (
+                        <Marker
+                          position={[
+                            destinationLocation.lat,
+                            destinationLocation.lon,
+                          ]}
+                          icon={destinationIcon}
+                        >
+                          <Popup>
+                            <div className="font-medium">Destination</div>
+                          </Popup>
+                        </Marker>
+                      )}
 
-                    <RecenterMap 
-                      userLocation={location}
-                      pickupLocation={pickupLocation}
-                      destinationLocation={destinationLocation}
+                    { location && !pickupLocation.lat && !destinationLocation.lat ? (
+                      <AccuracyCircle
+                        position={[location.lat, location.long]}
+                        accuracy={location.accuracy || 0}
+                      />
+                    ) : null}
+
+                    {/* Add routing when both locations are available */}
+                    {pickupLocation?.lat &&
+                      pickupLocation.lon &&
+                      destinationLocation?.lat &&
+                      destinationLocation.lon && (
+                        <Routing
+                          pickupLocation={
+                            pickupLocation as { lat: number; lon: number, display_name: string }
+                          }
+                          destinationLocation={
+                            destinationLocation as { lat: number; lon: number , display_name: string }
+                          }
+                        />
+                      )}
+
+                    <RecenterMap
+                      userLocation={
+                        location.lat !== null && location.long !== null
+                          ? { lat: location.lat, long: location.long }
+                          : null
+                      }
+                      pickupLocation={
+                        pickupLocation?.lat && pickupLocation.lon
+                            ? {
+                              lat: pickupLocation.lat,
+                              lon: pickupLocation.lon,
+                            }
+                          : null
+                      }
+                      destinationLocation={
+                        destinationLocation?.lat && destinationLocation.lon
+                          ? {
+                              lat: destinationLocation.lat,
+                              lon: destinationLocation.lon,
+                            }
+                          : null
+                      }
                     />
                   </MapContainer>
                 </motion.div>

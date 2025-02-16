@@ -1,4 +1,5 @@
 import axiosClient from "./axiosClient"
+import { parsePlaces } from "./utils/helpers"
 
 const loginUser = async(payload : {email: string , password : string})=>{
     const res = await axiosClient.post("/user/login", payload)
@@ -21,8 +22,8 @@ const getListOfPlaces = async(queryPlace:string)=>{
     const res = await axiosClient.post("/location/locationSearch",{
         queryPlace
     })
-    console.log("RES",res)
-    return res.data.data
+    console.log("RES",parsePlaces(res.data.data))
+    return parsePlaces(res.data.data)
 }
 
 
