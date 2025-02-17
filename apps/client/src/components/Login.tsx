@@ -47,8 +47,8 @@ export default function Login() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Login to Uber</CardTitle>
-          <CardDescription>
+          <CardTitle className="font-uber">Login to Uber</CardTitle>
+          <CardDescription className="font-uber">
             Enter your email and password to access your account
           </CardDescription>
         </CardHeader>
@@ -62,7 +62,7 @@ export default function Login() {
                 Email <span className="text-red-500 ">*</span>
               </label>
               <Input
-                className="mt-2"
+                className="mt-2 font-uber "
                 placeholder="Enter Your Email"
                 {...register("email", {
                   required: "This is field is required",
@@ -80,14 +80,14 @@ export default function Login() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 pt-2"
+                className="block  text-sm font-medium text-gray-700 pt-2"
               >
                 Password <span className="text-red-500 ">*</span>
               </label>
               <Input
                 type="password"
                 placeholder="Enter your password"
-                className="mt-2"
+                className="mt-2 font-uber"
                 {...register("password", {
                   required: "This is field is required",
                   validate: {
@@ -97,22 +97,22 @@ export default function Login() {
                 })}
               />
               {errors.password?.message && (
-                <small className="text-red-500">
+                <small className="text-red-500 font-uber">
                   {errors.password.message}
                 </small>
               )}
             </div>
-            <Button disabled={mutation.isPending} type="submit" className="w-full mt-6">
+            <Button disabled={mutation.isPending} type="submit" className=" font-uber w-full mt-6">
               {mutation.isPending ? (
                 <Loader className="animate-spin"/>
               ) : "Login"}
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-center">
+        <CardFooter className="font-uber flex justify-center">
           <p>
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-blue-600 hover:underline">
+            <span>Don't have an account?</span>{" "}
+            <Link to="/signup" className="font-uber text-blue-600 hover:underline">
               Sign up
             </Link>
           </p>

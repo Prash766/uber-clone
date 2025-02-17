@@ -51,16 +51,16 @@ const NavBar = () => {
       {/* Navbar */}
       <div className="w-full bg-black text-white p-6 flex justify-between items-center">
         <div className="flex items-center space-x-9 ml-10">
-          <div className="text-2xl font-bold cursor-pointer">Uber</div>
+          <div className="font-uber text-4xl font-bold cursor-pointer">Uber</div>
           <ul className=" hidden md:flex space-x-7 cursor-pointer">
-            <li>About</li>
-            <li>Services</li>
+            <li className="font-uber">About</li>
+            <li className="font-uber">Services</li>
           </ul>
         </div>
         <ul className="text-white font-semi-bold flex space-x-8 mr-10 cursor-pointer">
-          <li onClick={handleSignInClick}>Sign In</li>
-          <li onClick={handleSignUpClick}>Sign Up</li>
-          <li onClick={isMenuModalClicked} className=" md:hidden">
+          <li className="font-uber" onClick={handleSignInClick}>Sign In</li>
+          <li className="font-uber" onClick={handleSignUpClick}>Sign Up</li>
+          <li  onClick={isMenuModalClicked} className="font-uber md:hidden">
             <AnimatePresence>
               <motion.div
                 key={isMenuModalOpen ? "menu" : "x"}

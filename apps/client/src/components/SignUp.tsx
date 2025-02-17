@@ -55,8 +55,8 @@ export default function Signup() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Sign up for UberClone</CardTitle>
-          <CardDescription>
+          <CardTitle className="font-uber">Sign up for UberClone</CardTitle>
+          <CardDescription className="font-uber">
             Create your account to start riding or driving
           </CardDescription>
         </CardHeader>
@@ -68,7 +68,7 @@ export default function Signup() {
                 <Input
                   id="firstName"
                   type="text"
-                  className="mt-2"
+                  className="mt-2 font-uber "
                   placeholder="Enter your full name"
                   {...register("firstName", {
                     required: "First Name is required",
@@ -85,7 +85,7 @@ export default function Signup() {
                 <Input
                   id="lastName"
                   type="text"
-                  className="mt-2"
+                  className="mt-2 font-uber"
                   placeholder="Enter your full name"
                   {...register("lastName", {
                     required: "Last Name is required",
@@ -102,7 +102,7 @@ export default function Signup() {
                 <Input
                   id="email"
                   type="email"
-                  className="mt-2"
+                  className="mt-2 font-uber"
                   placeholder="Enter your email"
                   {...register("email", { required: "Email is required" })}
                 />
@@ -115,7 +115,7 @@ export default function Signup() {
                 <Input
                   id="password"
                   type="password"
-                  className="mt-2"
+                  className="mt-2 font-uber"
                   placeholder="Create a password"
                   {...register("password", {
                     required: "Password is required",
@@ -133,7 +133,7 @@ export default function Signup() {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-center">
+        <CardFooter className="font-uber flex justify-center">
           <p>
             Already have an account?{" "}
             <Link to="/login" className="text-blue-600 hover:underline">

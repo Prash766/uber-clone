@@ -53,7 +53,7 @@ const PlaceSuggestDropdown = ({
               isOpen = {isOpen}
             />
           ))
-        ) : (
+        ) : ( 
           <p className="font-uber text-center py-2">No results found</p>
         )}
       </div>
