@@ -45,8 +45,8 @@ const PlaceSuggestionItem = ({
         <Utensils className="h-5 w-5 text-gray-500" />
       </div>
       <div className="flex-grow min-w-0">
-        <div className="font-semibold text-sm text-gray-800 truncate">{place.display_name}</div>
-        <p className="text-xs text-gray-500 truncate">{place.name}</p>
+        <div className="font-uber font-semibold text-sm text-gray-800 truncate">{place.display_name}</div>
+        <p className="font-uber text-xs text-gray-500 truncate">{place.name}</p>
       </div>
     </motion.div>
   );

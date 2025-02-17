@@ -20,8 +20,8 @@ const SquareMarker = L.divIcon({
   </div>`,
   className: 'custom-div-icon',
   iconSize: [12, 12],
-  iconAnchor: [6, 6], // Center of the icon
-  popupAnchor: [0, -6] // Above the icon
+  iconAnchor: [6, 6], 
+  popupAnchor: [0, -6] 
 });
 
 export default SquareMarker;

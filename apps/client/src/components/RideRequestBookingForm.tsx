@@ -78,7 +78,7 @@ export default function RideRequestForm() {
       ref={formRef}
       className="max-w-md p-4 md:container mx-auto md:max-w-7xl w-full"
     >
-      <h1 className="text-[33px] font-bold mb-8">Request a ride</h1>
+      <h1 className="font-uber text-[33px] font-bold mb-8">Request a ride</h1>
 
       <div className="relative space-y-4">
         <div className="relative">
@@ -90,8 +90,8 @@ export default function RideRequestForm() {
               handleInputChange(e.target.value, "pickup");
             }}
             onFocus={() => setActiveInput("pickup")}
-            className="h-14 pl-9 bg-muted/50 rounded-xl"
-            placeholder="Enter location"
+            className="font-uber h-14 pl-9 bg-muted/50 rounded-xl"
+            placeholder="Enter Location"
           />
           {activeInput === "pickup" ? (
             <PlaceSuggestDropdown
@@ -112,7 +112,7 @@ export default function RideRequestForm() {
               handleInputChange(e.target.value, "destination");
             }}
             onFocus={() => setActiveInput("destination")}
-            className="h-14 pl-9 bg-muted/50 rounded-xl"
+            className="font-uber h-14 pl-9 bg-muted/50 rounded-xl"
             placeholder="Enter destination"
           />
           {activeInput === "destination" ? (
@@ -130,27 +130,27 @@ export default function RideRequestForm() {
 
         <div className="grid grid-cols-2 gap-3 pt-2">
           <Select defaultValue="today">
-            <SelectTrigger className="bg-muted/50 h-12">
+            <SelectTrigger className="font-uber bg-muted/50 h-12">
               <SelectValue placeholder="Select date" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="tomorrow">Tomorrow</SelectItem>
+              <SelectItem value="today" className="font-uber">Today</SelectItem>
+              <SelectItem value="tomorrow" className="font-uber">Tomorrow</SelectItem>
             </SelectContent>
           </Select>
 
           <Select defaultValue="now">
-            <SelectTrigger className="bg-muted/50 h-12">
+            <SelectTrigger className="font-uber bg-muted/50 h-12">
               <SelectValue placeholder="Select time" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="now">Now</SelectItem>
-              <SelectItem value="later">Schedule for later</SelectItem>
+            <SelectContent >
+              <SelectItem className="font-uber" value="now">Now</SelectItem>
+              <SelectItem  className= "font-uber" value="later">Schedule for later</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        <Button className="w-full bg-black text-white hover:bg-black/90 h-12 text-base font-medium rounded-xl">
+        <Button className="w-full font-uber  bg-black text-white hover:bg-black/90 h-12 text-base font-medium rounded-xl">
           See prices
         </Button>
       </div>

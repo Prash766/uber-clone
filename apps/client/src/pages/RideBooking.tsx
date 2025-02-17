@@ -12,6 +12,7 @@ import { setUserLocation } from "@repo/redux-store/user_location";
 import MapSkeleton from "../components/ui/MapSkeleton";
 import SquareMarker from "../components/ui/MapIcons/SquareMaker";
 import { createTimeMarkerIcon } from "../components/ui/TimeMarkerIcon";
+import ChooseYourRide from "../components/ChooseYourRide";
 
 const Routing = ({
   pickupLocation,
@@ -206,12 +207,14 @@ const RideBooking = () => {
   return (
     <>
       <BookingFormContainer children={[]} />
-      <div className="container mx-auto my-2">
+      <div className="container max-w-[2400px]  mx-auto my-5 ">
         <div className="grid grid-cols-12">
-          <div className="col-span-3">
+          <div className="col-span-3 ">
             <RideRequestForm />
           </div>
-          <div className="col-span-5"></div>
+          <div className="col-span-5 ">
+          <ChooseYourRide/>
+          </div>
           <div className="col-span-4 min-h-screen">
             {location.lat && location.long ? (
               <MapContainer

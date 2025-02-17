@@ -54,7 +54,7 @@ const PlaceSuggestDropdown = ({
             />
           ))
         ) : (
-          <p className="text-center py-2">No results found</p>
+          <p className="font-uber text-center py-2">No results found</p>
         )}
       </div>
     </motion.div>
