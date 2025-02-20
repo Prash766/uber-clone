@@ -16,181 +16,106 @@ import ChooseYourRide from "../components/ChooseYourRide";
 import { useMutation } from "@tanstack/react-query";
 import { getRideRoute } from "../api-client";
 import { setRoutePolyline } from "@repo/redux-store/ride";
+import { decode } from "@mapbox/polyline";
 
-const Routing = ({
-  pickupLocation,
-  destinationLocation,
-}: {
+const Routing = ({ pickupLocation, destinationLocation }:{
   pickupLocation: { lat: number; lon: number; display_name: string };
   destinationLocation: { lat: number; lon: number; display_name: string };
+
 }) => {
   const map = useMap();
-  const [markers, setMarkers] = useState<{
-    pickup: L.Marker | null;
-    destination: L.Marker | null;
-  }>({ pickup: null, destination: null });
-  const routingControl = useRef<L.Routing.Control | null>(null);
-  const {polyline} = useSelector((state: RootState) => state.rideLocationReducer)
+  const [decodedCoordinates, setDecodedCoordinates] = useState<[number, number][]>([]);
+  const dispatch = useDispatch();
+  const polyline = useSelector((state: RootState) => state.rideLocationReducer.polyline);
 
-  const updateMarker = useCallback(
-    (
-      position: { lat: number; lon: number },
-      type: "pickup" | "destination"
-    ) => {
-      if (markers[type]) {
-        markers[type]?.remove();
-      }
-      const newMarker = L.marker([position.lat, position.lon], {
-        icon: SquareMarker,
-      }).addTo(map);
-      setMarkers((prev) => ({
-        ...prev,
-        [type]: newMarker,
-      }));
-      map.flyTo([position.lat, position.lon], 16, {
-        duration: 0.5,
-        animate: true,
-      });
-    },
-    [
-      pickupLocation.lat,
-      destinationLocation.lat,
-      pickupLocation.lon,
-      destinationLocation.lon,
-    ]
-  );
-
+  // Clear existing markers and polylines when component unmounts
   useEffect(() => {
-    if (routingControl.current) {
-      routingControl.current.remove();
-    }
-    if (
-      pickupLocation.lat === destinationLocation.lat &&
-      pickupLocation.lon === destinationLocation.lon
-    ) {
-      return;
-    }
-
-    if (pickupLocation.lat && pickupLocation.lon) {
-      updateMarker(pickupLocation, "pickup");
-    }
-    if (destinationLocation.lat && destinationLocation.lon) {
-      updateMarker(destinationLocation, "destination");
-    }
-    if (pickupLocation.lat && destinationLocation.lat) {
-      const routing = L.Routing.control({
-        waypoints: [
-          L.latLng(pickupLocation.lat, pickupLocation.lon),
-          L.latLng(destinationLocation.lat, destinationLocation.lon),
-        ],
-        router: L.Routing.osrmv1({
-          serviceUrl: "https://router.project-osrm.org/route/v1",
-        }),
-
-        lineOptions: {
-          styles: [{ color: "#000000", opacity: 0.8, weight: 4 }],
-          extendToWaypoints: true,
-          missingRouteTolerance: 0,
-        },
-        show: false,
-        plan: L.Routing.plan(
-          [
-            L.latLng(pickupLocation.lat, pickupLocation.lon),
-            L.latLng(destinationLocation.lat, destinationLocation.lon),
-          ],
-          {
-            createMarker: function () {
-              return false;
-            },
-            draggableWaypoints: false,
-            addWaypoints: false,
-          }
-        ),
-      }).addTo(map);
-
-      routing.on("routesfound", function (e) {
-        console.log(e);
-        const totalTimeInSeconds = e.routes[0].summary.totalTime;
-        let totalTime = Math.floor(totalTimeInSeconds / 60);
-        let timeFormat = "mins";
-        if (totalTime > 60) {
-          totalTime = Math.floor(totalTimeInSeconds / 3600);
-          timeFormat = "hrs";
-        }
-        console.log(totalTime);
-        const bounds = L.latLngBounds(
-          [pickupLocation.lat, pickupLocation.lon],
-          [destinationLocation.lat, destinationLocation.lon]
-        ).pad(0.1);
-
-        const pickUpTimeMarker = L.marker(
-          [pickupLocation.lat, pickupLocation.lon],
-          {
-            icon: createTimeMarkerIcon(
-              totalTime.toString(),
-              pickupLocation.display_name,
-              "pickup"
-            ),
-          }
-        ).addTo(map);
-
-        const destinationTimeMarker = L.marker(
-          [destinationLocation.lat, destinationLocation.lon],
-          {
-            icon: createTimeMarkerIcon(
-              totalTime.toString(),
-              destinationLocation.display_name,
-              "destination"
-            ),
-          }
-        ).addTo(map);
-
-        setMarkers({
-          pickup: pickUpTimeMarker,
-          destination: destinationTimeMarker,
-        });
-
-        map.fitBounds(bounds, {
-          padding: [50, 50],
-          duration: 1,
-          animate: true,
-        });
-      });
-
-      routingControl.current = routing;
-    }
     return () => {
-      if (routingControl.current) {
-        routingControl.current.remove();
-      }
-      markers.pickup?.remove();
-      markers.destination?.remove();
+      map.eachLayer((layer) => {
+        if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+          map.removeLayer(layer);
+        }
+      });
     };
-  }, [pickupLocation, destinationLocation]);
+  }, [map]);
 
-  return null;
+  // Decode polyline and update markers
+  useEffect(() => {
+    if (polyline) {
+      L.marker([pickupLocation.lat, pickupLocation.lon], {
+        icon: createTimeMarkerIcon("756088",pickupLocation.display_name, "pickup")
+      }).addTo(map);
+      L.marker([destinationLocation.lat, destinationLocation.lon], {
+        icon: createTimeMarkerIcon("756088",destinationLocation.display_name, "destination")
+      }).addTo(map);
+      try {
+        const decoded = decode(polyline).map(coord => [coord[0], coord[1]] as [number, number]);
+
+        setDecodedCoordinates(decoded);
+
+        // Fit bounds to show the entire route
+        if (decoded.length > 0) {
+          const bounds = L.latLngBounds(decoded);
+          map.fitBounds(bounds, { padding: [50, 50] });
+        }
+      } catch (error) {
+        console.error('Polyline decoding failed:', error);
+      }
+    }
+  }, [polyline, map]);
+
+  // Update markers
+  useEffect(() => {
+    // Clear existing markers
+    map.eachLayer((layer) => {
+      if (layer instanceof L.Marker) {
+        map.removeLayer(layer);
+      }
+    });
+
+    // Add new markers
+    if (pickupLocation?.lat) {
+      L.marker([pickupLocation.lat, pickupLocation.lon], {
+        icon: SquareMarker
+      }).addTo(map);
+    }
+    
+    if (destinationLocation?.lat) {
+      L.marker([destinationLocation.lat, destinationLocation.lon], {
+        icon: SquareMarker
+      }).addTo(map);
+    }
+  }, [pickupLocation, destinationLocation, map]);
+
+  return decodedCoordinates.length > 0 ? (
+    <Polyline
+      positions={decodedCoordinates}
+      pathOptions={{ color: '#000000', weight: 4 }}
+    />
+  ) : null;
 };
 
 const RideBooking = () => {
+  const dispatch = useDispatch();
+  const [error, setError] = useState<string | null>(null);
+  
   const { pickupLocation, destinationLocation } = useSelector(
     (state: RootState) => state.rideLocationReducer
   );
   const { location } = useSelector(
     (state: RootState) => state.userLocationReducer
   );
-  const dispatch = useDispatch();
-  const [error, setError] = useState<string | null>(null);
-  const {mutate ,data }= useMutation({
+
+  const { mutate } = useMutation({
     mutationKey: ["getRideRoute"],
     mutationFn: (params: { pickup: any; destination: any }) => getRideRoute(params.pickup, params.destination),
-    onSuccess:(data)=>{
-      setRoutePolyline(data.data.polyline)
-
+    onSuccess: (data) => {
+      dispatch(setRoutePolyline(data.data.polyline));
     },
-    onError:()=>{
-
+    onError: (error) => {
+      console.error('Failed to get route:', error);
     }
-  })
+  });
 
   useEffect(() => {
     navigator.geolocation.watchPosition(
@@ -217,34 +142,32 @@ const RideBooking = () => {
         });
       }
     );
-  }, []);
+  }, [dispatch]);
 
-  useEffect(()=>{
-    if (!pickupLocation.lat || !pickupLocation.lon || !destinationLocation.lat || !destinationLocation.lon) {
-      console.error('Invalid coordinates');
+  useEffect(() => {
+    if (pickupLocation?.lat && pickupLocation?.lon && destinationLocation?.lat && destinationLocation?.lon) {
+      const pickup = {
+        latitude: pickupLocation.lat,
+        longitude: pickupLocation.lon
+      };
+      const destination = {
+        latitude: destinationLocation.lat,
+        longitude: destinationLocation.lon
+      };
+      mutate({ pickup, destination });
     }
-    const pickup = {
-      latitude: pickupLocation.lat,
-      longitude: pickupLocation.lon
-    };
-    const destination = {
-      latitude: destinationLocation.lat,
-      longitude: destinationLocation.lon
-    };
-    mutate({ pickup, destination })
-
-  },[pickupLocation, destinationLocation])
+  }, [pickupLocation, destinationLocation, mutate]);
 
   return (
     <>
       <BookingFormContainer children={[]} />
-      <div className="container max-w-[2400px]  mx-auto my-5 ">
+      <div className="container max-w-[2400px] mx-auto my-5">
         <div className="grid grid-cols-12">
-          <div className=" md:hidden lg:block  lg:col-span-3 ">
+          <div className="md:hidden lg:block lg:col-span-3">
             <RideRequestForm />
           </div>
-          <div className="md:col-span-6 md:space-x-2 lg:col-span-5 ">
-          <ChooseYourRide/>
+          <div className="md:col-span-6 md:space-x-2 lg:col-span-5">
+            <ChooseYourRide />
           </div>
           <div className="md:col-span-6 lg:col-span-4 min-h-screen">
             {location.lat && location.long ? (
@@ -258,20 +181,18 @@ const RideBooking = () => {
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <Routing
-                  pickupLocation={
-                    pickupLocation as {
-                      lat: number;
-                      lon: number;
-                      display_name: string;
-                    }
+                  pickupLocation={pickupLocation as {
+                    lat: number;
+                    lon: number;
+                    display_name: string;
                   }
-                  destinationLocation={
-                    destinationLocation as {
-                      lat: number;
-                      lon: number;
-                      display_name: string;
-                    }
+}
+                  destinationLocation={destinationLocation as {
+                    lat: number;
+                    lon: number;
+                    display_name: string;
                   }
+}
                 />
               </MapContainer>
             ) : (
