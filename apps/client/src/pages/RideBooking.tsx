@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Polyline, TileLayer, useMap } from "react-leaflet";
 import BookingFormContainer from "../components/BookingFormContainer";
 import RideRequestForm from "../components/RideRequestBookingForm";
 import { useDispatch, useSelector } from "@repo/redux-store";
@@ -13,6 +13,9 @@ import MapSkeleton from "../components/ui/MapSkeleton";
 import SquareMarker from "../components/ui/MapIcons/SquareMaker";
 import { createTimeMarkerIcon } from "../components/ui/TimeMarkerIcon";
 import ChooseYourRide from "../components/ChooseYourRide";
+import { useMutation } from "@tanstack/react-query";
+import { getRideRoute } from "../api-client";
+import { setRoutePolyline } from "@repo/redux-store/ride";
 
 const Routing = ({
   pickupLocation,
@@ -27,6 +30,7 @@ const Routing = ({
     destination: L.Marker | null;
   }>({ pickup: null, destination: null });
   const routingControl = useRef<L.Routing.Control | null>(null);
+  const {polyline} = useSelector((state: RootState) => state.rideLocationReducer)
 
   const updateMarker = useCallback(
     (
@@ -176,6 +180,17 @@ const RideBooking = () => {
   );
   const dispatch = useDispatch();
   const [error, setError] = useState<string | null>(null);
+  const {mutate ,data }= useMutation({
+    mutationKey: ["getRideRoute"],
+    mutationFn: (params: { pickup: any; destination: any }) => getRideRoute(params.pickup, params.destination),
+    onSuccess:(data)=>{
+      setRoutePolyline(data.data.polyline)
+
+    },
+    onError:()=>{
+
+    }
+  })
 
   useEffect(() => {
     navigator.geolocation.watchPosition(
@@ -204,18 +219,34 @@ const RideBooking = () => {
     );
   }, []);
 
+  useEffect(()=>{
+    if (!pickupLocation.lat || !pickupLocation.lon || !destinationLocation.lat || !destinationLocation.lon) {
+      console.error('Invalid coordinates');
+    }
+    const pickup = {
+      latitude: pickupLocation.lat,
+      longitude: pickupLocation.lon
+    };
+    const destination = {
+      latitude: destinationLocation.lat,
+      longitude: destinationLocation.lon
+    };
+    mutate({ pickup, destination })
+
+  },[pickupLocation, destinationLocation])
+
   return (
     <>
       <BookingFormContainer children={[]} />
       <div className="container max-w-[2400px]  mx-auto my-5 ">
         <div className="grid grid-cols-12">
-          <div className="col-span-3 ">
+          <div className=" md:hidden lg:block  lg:col-span-3 ">
             <RideRequestForm />
           </div>
-          <div className="col-span-5 ">
+          <div className="md:col-span-6 md:space-x-2 lg:col-span-5 ">
           <ChooseYourRide/>
           </div>
-          <div className="col-span-4 min-h-screen">
+          <div className="md:col-span-6 lg:col-span-4 min-h-screen">
             {location.lat && location.long ? (
               <MapContainer
                 center={[location.lat, location.long]}

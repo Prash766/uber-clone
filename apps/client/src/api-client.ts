@@ -27,9 +27,19 @@ const getListOfPlaces = async(queryPlace:string)=>{
 }
 
 
+const getRideRoute = async(pickup:{latitude : number , longitude: number} , destination :{latitude : number , longitude: number})=>{
+    const res = await axiosClient.post("/ride/navigation/route", {
+        pickup,
+        destination
+    })
+    console.log("res for the rotue", res.data)
+    return res.data
+}
+
 export {
     loginUser,
     signUpUser,
     verifyUser,
-    getListOfPlaces
+    getListOfPlaces,
+    getRideRoute
 }
