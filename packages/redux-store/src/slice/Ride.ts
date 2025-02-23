@@ -37,7 +37,8 @@ export interface Route{
 export interface RideLocation {
     pickupLocation: PlacesType,
     destinationLocation: PlacesType,
-    route: Route
+    route: Route,
+    rideVehicleList: VehicleResponse
 
 }
 
@@ -45,6 +46,33 @@ interface PlacesList {
   pickUpPlacesList: PlacesType[];
   destinationPlacesList: PlacesType[];
 }
+
+export type Vehicle = {
+  vehicleType: string;
+  displayName: string;
+  description: string;
+  productImageUrl: string;
+  capacity: number;
+  currencyCode: string;
+  isAvailable: boolean;
+  distance: number; 
+  duration: number;
+  formattedDuration: string;
+  fare: string; 
+  fareAmount: number; 
+};
+
+type Tier = {
+  title: "Recommended"|"Economy";
+  products: Vehicle[];
+};
+
+type VehicleResponse = {
+  products: {
+    tiers: Tier[];
+  };
+};
+
 
 const placesListSlice = createSlice({
   name: "PlacesList",
@@ -104,6 +132,12 @@ const rideLocationSlice = createSlice({
           duration:null
         }
       ]
+     },
+     rideVehicleList: {
+      products: {
+        tiers: [
+        ]
+      }
      }
     } as RideLocation,
     reducers: {
@@ -115,6 +149,9 @@ const rideLocationSlice = createSlice({
       },
       setRoutePolyline:(state , action)=>{
         state.route= action.payload
+      },
+      setRideVehicleList:(state , action)=>{
+        state.rideVehicleList= action.payload
       }
     }
   });
@@ -144,6 +181,6 @@ const rideLocationSlice = createSlice({
 // })
   
 export const { setPickUpList, setDestinationList } = placesListSlice.actions;
-export const {setPickupLocation , setDestinationLocation , setRoutePolyline} = rideLocationSlice.actions
+export const {setPickupLocation , setDestinationLocation , setRoutePolyline ,setRideVehicleList } = rideLocationSlice.actions
 export const placeListReducer  = placesListSlice.reducer;
 export const rideLocationReducer= rideLocationSlice.reducer

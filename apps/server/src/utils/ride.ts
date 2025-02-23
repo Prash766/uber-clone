@@ -73,8 +73,10 @@ export const VEHICLE_PRICES_PER_KM = {
     carDuration: number , 
     currency: string = 'INR',
   ): UnifiedResponse => {
-    const formatCurrency = (value: number) => 
-      `${currency}${value.toFixed(2)}`;
+    const formatCurrency = (value: number) => {
+const currency_symbol = "₹";
+     return  `${currency_symbol}${value.toFixed(2)}`;
+    }
   
     const processTier = (tier: typeof TIERS.recommended) => 
       tier.map(vehicle => {
@@ -110,11 +112,11 @@ export const VEHICLE_PRICES_PER_KM = {
         products: {
           tiers: [
             {
-              title: 'recommended',
+              title: 'Recommended',
               products: processTier(TIERS.recommended)
             },
             {
-              title: 'economy',
+              title: 'Economy',
               products: processTier(TIERS.economy)
             }
           ]

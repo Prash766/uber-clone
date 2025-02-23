@@ -42,7 +42,7 @@ export const getRidePrices  = async(params  : {locations:{
 })=>{
     console.log("LOCATIONS",params)
     const res = await axiosClient.post('/ride/navigation/price', params)
-    return res.data.data
+    return res.data.response
 }
 
 export {

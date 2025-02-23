@@ -5,4 +5,6 @@ export * from './src/components/ui/label'
 export * from './src/components/ui/select'
 export * from './src/components/ui/alert'
 export * from './src/components/ui/avatar'
+
+export * from  './src/components/RideDetailSkeleton'
  
