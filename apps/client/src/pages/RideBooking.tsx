@@ -26,9 +26,8 @@ const Routing = ({ pickupLocation, destinationLocation }:{
   const map = useMap();
   const [decodedCoordinates, setDecodedCoordinates] = useState<[number, number][]>([]);
   const dispatch = useDispatch();
-  const polyline = useSelector((state: RootState) => state.rideLocationReducer.polyline);
+  const route = useSelector((state: RootState) => state.rideLocationReducer.route);
 
-  // Clear existing markers and polylines when component unmounts
   useEffect(() => {
     return () => {
       map.eachLayer((layer) => {
@@ -39,21 +38,18 @@ const Routing = ({ pickupLocation, destinationLocation }:{
     };
   }, [map]);
 
-  // Decode polyline and update markers
   useEffect(() => {
-    if (polyline) {
+    if (route.data.polyline) {
       L.marker([pickupLocation.lat, pickupLocation.lon], {
-        icon: createTimeMarkerIcon("756088",pickupLocation.display_name, "pickup")
-      }).addTo(map);
+        icon: createTimeMarkerIcon(`${route.distanceString}`,pickupLocation.display_name, "pickup")
+      }).addTo(map);   
       L.marker([destinationLocation.lat, destinationLocation.lon], {
-        icon: createTimeMarkerIcon("756088",destinationLocation.display_name, "destination")
+        icon: createTimeMarkerIcon(`${route.distanceString}`,destinationLocation.display_name, "destination")
       }).addTo(map);
       try {
-        const decoded = decode(polyline).map(coord => [coord[0], coord[1]] as [number, number]);
+        const decoded = decode(route.data.polyline).map(coord => [coord[0], coord[1]] as [number, number]);
 
         setDecodedCoordinates(decoded);
-
-        // Fit bounds to show the entire route
         if (decoded.length > 0) {
           const bounds = L.latLngBounds(decoded);
           map.fitBounds(bounds, { padding: [50, 50] });
@@ -62,28 +58,30 @@ const Routing = ({ pickupLocation, destinationLocation }:{
         console.error('Polyline decoding failed:', error);
       }
     }
-  }, [polyline, map]);
+  }, [route.data.polyline, map]);
 
-  // Update markers
   useEffect(() => {
-    // Clear existing markers
     map.eachLayer((layer) => {
       if (layer instanceof L.Marker) {
         map.removeLayer(layer);
       }
     });
-
-    // Add new markers
     if (pickupLocation?.lat) {
       L.marker([pickupLocation.lat, pickupLocation.lon], {
         icon: SquareMarker
       }).addTo(map);
+      map.flyTo([pickupLocation.lat, pickupLocation.lon], 14, {
+        duration: 1.5,
+      });   
     }
     
     if (destinationLocation?.lat) {
       L.marker([destinationLocation.lat, destinationLocation.lon], {
         icon: SquareMarker
       }).addTo(map);
+      map.flyTo([destinationLocation.lat, destinationLocation.lon], 14, {
+        duration: 1.5,
+      });   
     }
   }, [pickupLocation, destinationLocation, map]);
 
@@ -110,7 +108,8 @@ const RideBooking = () => {
     mutationKey: ["getRideRoute"],
     mutationFn: (params: { pickup: any; destination: any }) => getRideRoute(params.pickup, params.destination),
     onSuccess: (data) => {
-      dispatch(setRoutePolyline(data.data.polyline));
+      console.log("route data",data)
+      dispatch(setRoutePolyline(data));
     },
     onError: (error) => {
       console.error('Failed to get route:', error);

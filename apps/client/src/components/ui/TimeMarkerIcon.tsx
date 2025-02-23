@@ -1,6 +1,32 @@
 import L from 'leaflet';
 
-export const createTimeMarkerIcon = (duration: string, locationText: string, type: string) => {
+export const createTimeMarkerIcon = (duration: string, locationText: string, type: "pickup" | "destination") => {
+  let hoursPart = "";
+  let minutesPart = "";
+  
+  if (duration.includes("h") || duration.includes("hr")) {
+    const regex = /(\d+\s*(?:h(?:r)?))\s*(\d+)\s*min/i;
+    const match = duration.match(regex);
+    if (match) {
+      hoursPart = match[1].trim();
+      minutesPart = match[2].trim() + " min";
+    } else {
+      const parts = duration.split(" ");
+      hoursPart = parts[0];
+      minutesPart = parts.slice(1).join(" ");
+    }
+  } else {
+    const regex = /(\d+)\s*min/i;
+    const match = duration.match(regex);
+    if (match) {
+      hoursPart = match[1].trim();
+      minutesPart = "min";
+    } else {
+      hoursPart = duration;
+      minutesPart = "";
+    }
+  }
+
   return L.divIcon({
     className: "custom-time-marker",
     html: `
@@ -26,19 +52,24 @@ export const createTimeMarkerIcon = (duration: string, locationText: string, typ
               ? `<div style="
                     background: white;
                     color: black;
-                    width: 32px;
-                    height: 28px;
+                    width: 40px;
                     border-radius: 4px;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 0;
-                    margin: 0;
-                    line-height: 1;
+                    display: grid;
+                    grid-template-rows: auto auto;
+                    text-align: center;
+                    padding: 2px 0;
+                    line-height: 1.2;
                   ">
-                    <div style="font-weight: 600; font-size: 13px;">${duration}</div>
-                    <div style="font-size: 9px; margin-top: 2px;">min</div>
+                    <div style="
+                      font-weight: 600;
+                      font-size: 13px;
+                      margin-bottom: -1px;
+                    ">${hoursPart}</div>
+                    <div style="
+                      font-weight: 600;
+                      font-size: 11px;
+                      margin-top: -1px;
+                    ">${minutesPart}</div>
                   </div>`
               : ""
           }

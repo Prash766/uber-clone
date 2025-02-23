@@ -36,6 +36,15 @@ const getRideRoute = async(pickup:{latitude : number , longitude: number} , dest
     return res.data
 }
 
+export const getRidePrices  = async(params  : {locations:{
+    pickup:{latitude : number , longitude: number} ,
+    destination :{latitude : number , longitude: number}}
+})=>{
+    console.log("LOCATIONS",params)
+    const res = await axiosClient.post('/ride/navigation/price', params)
+    return res.data.data
+}
+
 export {
     loginUser,
     signUpUser,

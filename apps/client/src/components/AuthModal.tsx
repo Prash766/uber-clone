@@ -22,7 +22,7 @@ const AuthModal = ({ authOptions, onClose }: AuthModalProps) => {
   }
   return (
     <motion.div
-      className="absolute z-2  top-full left-0 w-full h-[calc(100vh-80px)] bg-white shadow-lg p-10 z-50 overflow-y-auto"
+      className="font-uber absolute z-2  top-full left-0 w-full h-[calc(100vh-80px)] bg-white shadow-lg p-10 z-50 overflow-y-auto"
       initial={{ opacity: 0, y: -30 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -30 }}

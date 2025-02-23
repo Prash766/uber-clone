@@ -18,10 +18,26 @@ export interface Location {
     lon : number | null
 }
 
+export interface Route{
+  distance : number| null,
+  eta:number| null,
+  distanceString : string 
+  data:{
+    polyline:string
+  },
+  legs:[
+    {
+      distance: number| null,
+      duration: number| null
+    }
+  ]
+
+}
+
 export interface RideLocation {
     pickupLocation: PlacesType,
     destinationLocation: PlacesType,
-    polyline: string
+    route: Route
 
 }
 
@@ -75,7 +91,20 @@ const rideLocationSlice = createSlice({
         boundingbox: [],
       
       },
-     polyline:""
+     route:{
+      data:{
+        polyline:""
+      },
+      distance:null,
+      eta:null,
+      distanceString:"",
+      legs:[
+        {
+          distance:null,
+          duration:null
+        }
+      ]
+     }
     } as RideLocation,
     reducers: {
       setPickupLocation: (state, action) => {
@@ -85,10 +114,17 @@ const rideLocationSlice = createSlice({
         state.destinationLocation = action.payload;
       },
       setRoutePolyline:(state , action)=>{
-        state.polyline= action.payload
+        state.route= action.payload
       }
     }
   });
+
+
+  // const ridePrices = createSlice({
+  //   initialState :{
+  //     ridePricesList:[]
+  //   }
+  // })
 
 
 // const rideBookingLocationEntrySlice =createSlice({
