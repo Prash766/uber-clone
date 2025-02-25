@@ -1,4 +1,4 @@
-import { Button, Card, Input } from "@repo/ui";
+import { Button,  Input } from "@repo/ui";
 import {
   Select,
   SelectContent,
@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui";
-import { Circle, Clock, MapPin } from "lucide-react";
+import { Circle,  MapPin } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { getListOfPlaces } from "../api-client";
 import { useState, useCallback, useEffect, useRef } from "react";
@@ -14,6 +14,7 @@ import { debounce } from "lodash";
 import PlaceSuggestDropdown from "./ui/PlaceSuggestDropDown/PlaceSuggestDropdown";
 import { useDispatch } from "@repo/redux-store";
 import { setDestinationList, setPickUpList } from "@repo/redux-store/ride";
+import { useNavigate } from "react-router-dom";
 
 interface DestinationSuggestion {
   name: string;
@@ -28,6 +29,7 @@ export default function RideRequestForm() {
     null | "pickup" | "destination"
   >(null);
   const formRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate()
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["placesList"],
@@ -150,7 +152,7 @@ export default function RideRequestForm() {
           </Select>
         </div>
 
-        <Button className="w-full font-uber  bg-black text-white hover:bg-black/90 h-12 text-base font-medium rounded-xl">
+        <Button onClick={()=>navigate('/ride-booking')} className="w-full font-uber  bg-black text-white hover:bg-black/90 h-12 text-base font-medium rounded-xl">
           See prices
         </Button>
       </div>

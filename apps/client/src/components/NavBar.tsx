@@ -8,8 +8,15 @@ import {
 import { RootState } from "@repo/redux-store/store";
 import AuthModal from "./AuthModal";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { ArrowDown, ChevronDown, Menu, X } from "lucide-react";
 import MenuDropDownModal from "../utils/Modals/MenuDropDownModal";
+import {  Button } from "@repo/ui";
+import {useEffect} from 'react'
+import { useQuery } from "@tanstack/react-query";
+import { getUserDetails } from "../api-client";
+import { setUserInfo } from "@repo/redux-store/auth";
+import {useState} from 'react'
+import UserProfileModal from "../utils/Modals/UserProfileModal";
 
 const loginOptions = [
   { text: "Sign in to drive & deliver", path: "/captain-login" },
@@ -29,6 +36,18 @@ const NavBar = () => {
   const { isMenuModalOpen } = useSelector(
     (state: RootState) => state.dropdownMenuModalReducer
   );
+  const {isAuthenticated, user}=useSelector((state:RootState)=>state.authUserReducer)
+    const { data, isFetching } = useQuery({
+      queryKey: ["userData"],
+      queryFn: getUserDetails,
+    });
+  const [openUserProfileModal, setOpenUserProfileModal] = useState<boolean>(false)
+    
+    useEffect(() => {
+      if (!isFetching && data?.user) {
+        dispatch(setUserInfo(data.user));
+      }
+    }, [isFetching, data, dispatch]);
 
   function handleSignInClick() {
     dispatch(openModal({ modalType: ModalType.login }));
@@ -57,7 +76,26 @@ const NavBar = () => {
             <li className="font-uber">Services</li>
           </ul>
         </div>
-        <ul className="text-white font-semi-bold flex space-x-8 mr-10 cursor-pointer">
+       {
+        isAuthenticated ? (
+          isFetching ? (
+            <div className="w-10 animate-pulse bg-slate-200"/>
+          ) :(
+            <Button onClick={()=> setOpenUserProfileModal(!openUserProfileModal)} variant={"default"} className="relative font-uber py-6 text-xl  text-white rounded-xl">
+            { 
+            user.firstName
+            }
+                  <AnimatePresence>
+        {
+          openUserProfileModal && <UserProfileModal openUserProfileModal= {openUserProfileModal} setOpenUserProfileModal={()=>setOpenUserProfileModal(!openUserProfileModal)} />
+        }
+      </AnimatePresence>
+            <ChevronDown size={10}/>
+          </Button>
+          )
+       
+        )  :(
+          <ul className="text-white font-semi-bold flex space-x-8 mr-10 cursor-pointer">
           <li className="font-uber" onClick={handleSignInClick}>Sign In</li>
           <li className="font-uber" onClick={handleSignUpClick}>Sign Up</li>
           <li  onClick={isMenuModalClicked} className="font-uber md:hidden">
@@ -79,6 +117,8 @@ const NavBar = () => {
             </AnimatePresence>
           </li>
         </ul>
+        )
+       } 
       </div>
 
       {/* Modal Below Navbar */}
@@ -100,6 +140,7 @@ const NavBar = () => {
         }
 
       </AnimatePresence>
+
     </div>
   );
 };

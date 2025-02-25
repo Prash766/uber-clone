@@ -18,6 +18,12 @@ const verifyUser = async()=>{
     return res
 }
 
+const getUserDetails= async()=>{
+    const res = await axiosClient.get("/user/me")
+        return res.data
+    }
+
+
 const getListOfPlaces = async(queryPlace:string)=>{
     const res = await axiosClient.post("/location/locationSearch",{
         queryPlace
@@ -45,10 +51,12 @@ export const getRidePrices  = async(params  : {locations:{
     return res.data.response
 }
 
+
 export {
     loginUser,
     signUpUser,
     verifyUser,
     getListOfPlaces,
-    getRideRoute
+    getRideRoute,
+    getUserDetails
 }
