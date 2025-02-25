@@ -11,6 +11,7 @@ router.route('/login').post(validateSchema(loginSchema), loginUser)
 router.route('/profile').get(verifyUserJWT , getUserProfile)
 router.route('/logout').get(verifyUserJWT ,logOutUser )
 router.route("/verify-user").get(verifyUserJWT , verifyUser)
+router.route("/me").get(verifyUserJWT , getUserProfile)
 
 
     

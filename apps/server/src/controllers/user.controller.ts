@@ -100,10 +100,9 @@ const logOutUser = asyncHandler(async (req, res) => {
 
 const getUserProfile = asyncHandler(async (req, res) => {
   try {
-    const {id}  = req.user
     const user = await prisma.user.findUnique({
       where: {
-        id: id,
+        id: req.user.id
       },
       select: userDetails,
     });
@@ -112,6 +111,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       user,
     });
   } catch (error) {
+    console.log(error)
     return res.status(400).json({
       message: "Internal Server Error",
     });
