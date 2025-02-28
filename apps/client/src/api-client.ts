@@ -12,6 +12,11 @@ const signUpUser = async(payload : {email: string , password : string})=>{
     return res.data.user
 }
 
+const logOutUser = async()=>{
+    const res = await axiosClient.get("/user/logout")
+    return res
+}
+
 const verifyUser = async()=>{
     const res = await axiosClient.get("/user/verify-user")
     console.log("res ",res)
@@ -58,5 +63,6 @@ export {
     verifyUser,
     getListOfPlaces,
     getRideRoute,
-    getUserDetails
+    getUserDetails,
+    logOutUser
 }

@@ -168,7 +168,7 @@ const RideBooking = () => {
           <div className="md:col-span-6 md:space-x-2 lg:col-span-5">
             <ChooseYourRide />
           </div>
-          <div className="md:col-span-6 lg:col-span-4 min-h-screen">
+          <div className="z-0 md:col-span-6 lg:col-span-4 min-h-screen">
             {location.lat && location.long ? (
               <MapContainer
                 center={[location.lat, location.long]}

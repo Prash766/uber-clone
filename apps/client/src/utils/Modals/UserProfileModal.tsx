@@ -1,15 +1,21 @@
-import { useSelector } from "@repo/redux-store";
+import { useDispatch, useSelector } from "@repo/redux-store";
 import { RootState } from "@repo/redux-store/store";
 import { motion } from "framer-motion";
 import { Button } from "@repo/ui";
 import { Activity, ChevronRight, HelpCircle, Star, User, Wallet } from "lucide-react";
 import {useEffect} from 'react'
+import { logOutUser } from "../../api-client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { setIsUserAuthenticated } from "@repo/redux-store/auth";
 
 
-const UserProfileModal = ({openUserProfileModal , setOpenUserProfileModal} : { openUserProfileModal : boolean , setOpenUserProfileModal : ()=> void }) => {
+const UserProfileModal = ({openUserProfileModal , setOpenUserProfileModal} : { openUserProfileModal : boolean , setOpenUserProfileModal : (value: boolean) => void }) => {
   const { user } = useSelector((state: RootState) => state.authUserReducer);
+  const {isAuthenticated} = useSelector((state:RootState)=> state.authUserReducer)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   
-  // Navigation menu items with icons and routes
   const menuItems = [
     { icon: <User size={20} />, label: "Manage account", route: "/account" },
     { icon: <Activity size={20} />, label: "Ride", route: "/ride" },
@@ -18,22 +24,37 @@ const UserProfileModal = ({openUserProfileModal , setOpenUserProfileModal} : { o
     { icon: <ChevronRight size={20} />, label: "Uber for Business", route: "/business" }
   ];
 
-  // Function to handle sign out
-  const handleSignOut = () => {
-    // Logic for signing out would go here
-    console.log("Signing out...");
-    // Redirect to home page or login page after sign out
+  const handleSignOut = async() => {
+await logOutUser()
+toast.success("Logged Out Successfully ")
+setOpenUserProfileModal(false)
+navigate('/', {replace :true})
+dispatch(setIsUserAuthenticated(false))
+
+console.log(isAuthenticated)
   };
 
-  useEffect(() => {
-    if (openUserProfileModal) {
-      document.addEventListener("mousedown",()=> setOpenUserProfileModal());
-    }
+  const handleMenuClick = (route: string) => {
+    navigate(route);
+    setOpenUserProfileModal(false);
+  };
 
-    return () => {
-      document.removeEventListener("mousedown", ()=> setOpenUserProfileModal());
+  useEffect(() => { 
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (openUserProfileModal && !target.closest('.user-profile-modal-button')) {
+        setOpenUserProfileModal(false);
+      }
     };
-  }, [openUserProfileModal]);
+  
+    if (openUserProfileModal) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+  
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openUserProfileModal, setOpenUserProfileModal]);
 
 
   return (
@@ -42,9 +63,8 @@ const UserProfileModal = ({openUserProfileModal , setOpenUserProfileModal} : { o
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.2 }}
-      className="font-uber  absolute right-0 top-16 bg-white rounded-lg shadow-lg w-96 text-black z-50"
+      className="font-uber z-10 absolute right-0 top-16 bg-white rounded-lg shadow-lg w-96 text-black  "
     >
-      {/* Header section with user info */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
@@ -61,8 +81,6 @@ const UserProfileModal = ({openUserProfileModal , setOpenUserProfileModal} : { o
           </div>
         </div>
       </div>
-
-      {/* Quick action buttons */}
       <div className="grid grid-cols-3 gap-2 p-4 border-b border-gray-200">
         <div className="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-lg">
           <HelpCircle size={24} />
@@ -83,6 +101,7 @@ const UserProfileModal = ({openUserProfileModal , setOpenUserProfileModal} : { o
         {menuItems.map((item, index) => (
           <div 
             key={index}
+            onClick={() => handleMenuClick(item.route)}
             className="flex items-center py-3 px-4 hover:bg-gray-100 cursor-pointer"
           >
             <div className="w-8">{item.icon}</div>
@@ -91,8 +110,6 @@ const UserProfileModal = ({openUserProfileModal , setOpenUserProfileModal} : { o
           </div>
         ))}
       </div>
-
-      {/* Sign out button */}
       <div className="p-4 border-t border-gray-200">
         <Button 
           variant="outline" 

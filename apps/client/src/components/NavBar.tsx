@@ -8,7 +8,7 @@ import {
 import { RootState } from "@repo/redux-store/store";
 import AuthModal from "./AuthModal";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDown, ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import MenuDropDownModal from "../utils/Modals/MenuDropDownModal";
 import {  Button } from "@repo/ui";
 import {useEffect} from 'react'
@@ -81,13 +81,13 @@ const NavBar = () => {
           isFetching ? (
             <div className="w-10 animate-pulse bg-slate-200"/>
           ) :(
-            <Button onClick={()=> setOpenUserProfileModal(!openUserProfileModal)} variant={"default"} className="relative font-uber py-6 text-xl  text-white rounded-xl">
+            <Button onClick={()=> setOpenUserProfileModal(!openUserProfileModal)} variant={"default"} className="relative flex cursor-pointer font-uber py-6 text-xl  text-white rounded-xl user-profile-modal-button">
             { 
             user.firstName
             }
                   <AnimatePresence>
         {
-          openUserProfileModal && <UserProfileModal openUserProfileModal= {openUserProfileModal} setOpenUserProfileModal={()=>setOpenUserProfileModal(!openUserProfileModal)} />
+          openUserProfileModal && <UserProfileModal openUserProfileModal= {openUserProfileModal} setOpenUserProfileModal={(isOpen: boolean)=>setOpenUserProfileModal(isOpen)} />
         }
       </AnimatePresence>
             <ChevronDown size={10}/>
