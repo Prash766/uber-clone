@@ -36,7 +36,7 @@ const NavBar = () => {
   const { isMenuModalOpen } = useSelector(
     (state: RootState) => state.dropdownMenuModalReducer
   );
-  const {isAuthenticated, user}=useSelector((state:RootState)=>state.authUserReducer)
+  const {isAuthenticated, user} = useSelector((state:RootState)=>state.authUserReducer) 
     const { data, isFetching } = useQuery({
       queryKey: ["userData"],
       queryFn: getUserDetails,
