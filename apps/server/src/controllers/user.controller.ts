@@ -37,6 +37,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
     if (!isMatched) throw new ApiError("Invalid Credentials", 400);
     const token = generateAuthToken({
       id: user.id,
+      role:"user"
     });
     const { password: _, ...filteredUser } = user;
     res.cookie("auth-token", token, tokenOptions);
@@ -67,7 +68,7 @@ const signUpUser = asyncHandler(async (req, res) => {
       },
       select: userDetails,
     });
-    const token = generateAuthToken({ id: user.id });
+    const token = generateAuthToken({ id: user.id, role:"user" });
     res.cookie("auth-token", token, tokenOptions);
     return res.status(200).json({
       success: true,

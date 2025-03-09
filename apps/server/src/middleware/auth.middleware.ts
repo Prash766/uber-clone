@@ -17,8 +17,12 @@ const verifyUserJWT = async (
       process.env.JWT_SECRET as string
     ) as JwtPayload;
     console.log(decodedToken);
+    if(decodedToken.role!=="user"){
+      throw new ApiError("Unauthorized access", 404)
+    }
     req.user = {
       id: decodedToken.id,
+      role:decodedToken.role
     };
     next();
   } catch (error) {
@@ -42,7 +46,14 @@ const verifyCaptainJWT = async (
       token,
       process.env.JWT_SECRET as string
     ) as JwtPayload;
-    req.captain = decodedToken.id;
+    if(decodedToken.role!== "captain"){
+      throw new ApiError("Unauthorized", 404)
+    }
+    req.captain = {
+      id:decodedToken.id,
+      role:decodedToken.role
+
+    };
     next();
   } catch (error) {
     res.status(400).json({
