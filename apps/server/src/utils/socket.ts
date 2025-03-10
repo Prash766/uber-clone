@@ -24,10 +24,12 @@ import captainRouter from "../routes/captain.routes";
 import locationRouter from "../routes/location.routes";
 import rideRouter from "../routes/ride.routes";
 import errorMiddleware from "../middleware/error.middleware";
+import { userAuthCheck } from "./helper";
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/captain", captainRouter);
 app.use("/api/v1/location", locationRouter);
 app.use("/api/v1/ride", rideRouter);
+app.get("/api/v1/user/auth" ,userAuthCheck)
 
 app.use(errorMiddleware);
 

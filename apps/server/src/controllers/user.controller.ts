@@ -44,7 +44,10 @@ const loginUser = asyncHandler(async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "User Logged in",
-      user: filteredUser,
+      user: {...filteredUser,
+role:"user",
+isAuthenticated :true
+      },
     });
   } catch (error) {
     console.log(error)
@@ -73,7 +76,11 @@ const signUpUser = asyncHandler(async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "User created Successfully",
-      user,
+      user:{
+        ...user,
+        role:"user",
+        isAuthenticated :true
+      }
     });
   } catch (error: any) {
     if (error.code === "P2002") {
