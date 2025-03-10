@@ -12,11 +12,22 @@ const signUpUser = async(payload : {email: string , password : string})=>{
     return res.data.user
 }
 
+const logOutUser = async()=>{
+    const res = await axiosClient.get("/user/logout")
+    return res
+}
+
 const verifyUser = async()=>{
     const res = await axiosClient.get("/user/verify-user")
     console.log("res ",res)
     return res
 }
+
+const getUserDetails= async()=>{
+    const res = await axiosClient.get("/user/me")
+        return res.data
+    }
+
 
 const getListOfPlaces = async(queryPlace:string)=>{
     const res = await axiosClient.post("/location/locationSearch",{
@@ -36,10 +47,22 @@ const getRideRoute = async(pickup:{latitude : number , longitude: number} , dest
     return res.data
 }
 
+export const getRidePrices  = async(params  : {locations:{
+    pickup:{latitude : number , longitude: number} ,
+    destination :{latitude : number , longitude: number}}
+})=>{
+    console.log("LOCATIONS",params)
+    const res = await axiosClient.post('/ride/navigation/price', params)
+    return res.data.response
+}
+
+
 export {
     loginUser,
     signUpUser,
     verifyUser,
     getListOfPlaces,
-    getRideRoute
+    getRideRoute,
+    getUserDetails,
+    logOutUser
 }

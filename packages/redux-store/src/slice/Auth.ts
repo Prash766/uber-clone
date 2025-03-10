@@ -1,16 +1,21 @@
 import {createSlice} from '@reduxjs/toolkit'
 import { User as PrismaUser } from '@prisma/client'
-export interface User{
 
+export interface User{
+isAuthenticated : boolean,
+user : PrismaUser
 }
+
 
 const userAuthSlice = createSlice({
 
     name:"userAuthSlice",
     initialState:{
-        user:{},
+        user:{
+
+        } as PrismaUser,
         isAuthenticated : false
-    },
+    } as User,
     reducers: {
         setUserInfo : (state , action)=>{
             state.user = action.payload

@@ -63,14 +63,18 @@ model Captain{
   updatedAt DateTime @updatedAt
 }
 
-model Vehicle{
-  id Int @id @default(autoincrement())
-  color String 
-  captainId Int @unique
-  vehicleType VehicleType
-  vehicleNumber String
-  captain Captain @relation(fields: [captainId] , references: [id] , onDelete: Cascade)
+model Vehicle {
+  id             Int         @id @default(autoincrement())
+  color          String 
+  captainId      Int         @unique
+  vehicleType    VehicleType
+  vehicleNumber  String
+  licenseNumber  String?   
+  licenseState   String?   
+  licenseExpiry  DateTime? 
+  captain        Captain     @relation(fields: [captainId], references: [id], onDelete: Cascade)
 }
+
 
 model CaptainLocation {
   id Int @id @default(autoincrement())

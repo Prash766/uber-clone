@@ -73,8 +73,10 @@ export const VEHICLE_PRICES_PER_KM = {
     carDuration: number , 
     currency: string = 'INR',
   ): UnifiedResponse => {
-    const formatCurrency = (value: number) => 
-      `${currency}${value.toFixed(2)}`;
+    const formatCurrency = (value: number) => {
+const currency_symbol = "₹";
+     return  `${currency_symbol}${value.toFixed(2)}`;
+    }
   
     const processTier = (tier: typeof TIERS.recommended) => 
       tier.map(vehicle => {
@@ -82,6 +84,17 @@ export const VEHICLE_PRICES_PER_KM = {
         const distanceKm = distance / 1000;
         const fare = pricePerKm * distanceKm;
         const duration = vehicle.vehicleType==='moto' ? motoDuration : carDuration
+        const duration_min = Math.ceil(duration/60)
+        let durationString = null
+        if(duration_min>59){
+          const hours = Math.floor(duration_min / 60);
+  const remainingMinutes = Math.ceil(duration_min % 60);
+  durationString = `${hours}h ${remainingMinutes}min`
+        }
+        else{
+          durationString = `${duration_min} min`
+        }
+        
          
         return {
           ...vehicle,
@@ -89,7 +102,7 @@ export const VEHICLE_PRICES_PER_KM = {
           isAvailable: true,
           distance: distance,
           duration: duration,
-          formattedDuration: `${Math.round(duration / 60)} mins`,
+          formattedDuration: `${durationString}`,
           fare: formatCurrency(fare),
           fareAmount: Math.round(fare * 100)
         };
@@ -99,11 +112,11 @@ export const VEHICLE_PRICES_PER_KM = {
         products: {
           tiers: [
             {
-              title: 'recommended',
+              title: 'Recommended',
               products: processTier(TIERS.recommended)
             },
             {
-              title: 'economy',
+              title: 'Economy',
               products: processTier(TIERS.economy)
             }
           ]

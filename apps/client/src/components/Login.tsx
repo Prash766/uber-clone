@@ -32,7 +32,7 @@ export default function Login() {
     mutationFn: (data: UserLogin) => loginUser(data),
     onSuccess: (response) => {
       console.log("Login Successful:", response);
-      navigate('/ride-booking', {replace: true})
+      navigate('/request-ride', {replace: true})
     },
     onError: (error) => {
       console.error("Login Failed:", error);

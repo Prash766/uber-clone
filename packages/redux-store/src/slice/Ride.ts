@@ -18,10 +18,27 @@ export interface Location {
     lon : number | null
 }
 
+export interface Route{
+  distance : number| null,
+  eta:number| null,
+  distanceString : string 
+  data:{
+    polyline:string
+  },
+  legs:[
+    {
+      distance: number| null,
+      duration: number| null
+    }
+  ]
+
+}
+
 export interface RideLocation {
     pickupLocation: PlacesType,
     destinationLocation: PlacesType,
-    polyline: string
+    route: Route,
+    rideVehicleList: VehicleResponse
 
 }
 
@@ -29,6 +46,33 @@ interface PlacesList {
   pickUpPlacesList: PlacesType[];
   destinationPlacesList: PlacesType[];
 }
+
+export type Vehicle = {
+  vehicleType: string;
+  displayName: string;
+  description: string;
+  productImageUrl: string;
+  capacity: number;
+  currencyCode: string;
+  isAvailable: boolean;
+  distance: number; 
+  duration: number;
+  formattedDuration: string;
+  fare: string; 
+  fareAmount: number; 
+};
+
+type Tier = {
+  title: "Recommended"|"Economy";
+  products: Vehicle[];
+};
+
+type VehicleResponse = {
+  products: {
+    tiers: Tier[];
+  };
+};
+
 
 const placesListSlice = createSlice({
   name: "PlacesList",
@@ -75,7 +119,26 @@ const rideLocationSlice = createSlice({
         boundingbox: [],
       
       },
-     polyline:""
+     route:{
+      data:{
+        polyline:""
+      },
+      distance:null,
+      eta:null,
+      distanceString:"",
+      legs:[
+        {
+          distance:null,
+          duration:null
+        }
+      ]
+     },
+     rideVehicleList: {
+      products: {
+        tiers: [
+        ]
+      }
+     }
     } as RideLocation,
     reducers: {
       setPickupLocation: (state, action) => {
@@ -85,10 +148,20 @@ const rideLocationSlice = createSlice({
         state.destinationLocation = action.payload;
       },
       setRoutePolyline:(state , action)=>{
-        state.polyline= action.payload
+        state.route= action.payload
+      },
+      setRideVehicleList:(state , action)=>{
+        state.rideVehicleList= action.payload
       }
     }
   });
+
+
+  // const ridePrices = createSlice({
+  //   initialState :{
+  //     ridePricesList:[]
+  //   }
+  // })
 
 
 // const rideBookingLocationEntrySlice =createSlice({
@@ -108,6 +181,6 @@ const rideLocationSlice = createSlice({
 // })
   
 export const { setPickUpList, setDestinationList } = placesListSlice.actions;
-export const {setPickupLocation , setDestinationLocation , setRoutePolyline} = rideLocationSlice.actions
+export const {setPickupLocation , setDestinationLocation , setRoutePolyline ,setRideVehicleList } = rideLocationSlice.actions
 export const placeListReducer  = placesListSlice.reducer;
 export const rideLocationReducer= rideLocationSlice.reducer
