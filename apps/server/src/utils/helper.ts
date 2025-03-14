@@ -48,6 +48,7 @@ const userAuthCheck= asyncHandler(async(req , res )=>{
             return res.status(200).json({
                 success: true,
                 role:"user",
+                isAuthenticated:true,
                 data: user
             })
             

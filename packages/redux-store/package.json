@@ -9,7 +9,8 @@
     "./modal":"./src/slice/Modal.ts",
     "./auth":"./src/slice/Auth.ts",
     "./user_location":"./src/slice/Location.ts",
-    "./ride":"./src/slice/Ride.ts"
+    "./ride":"./src/slice/Ride.ts",
+    "./captain":"./src/slice/Captain.ts"
   },
   "keywords": [],
   "author": "",
