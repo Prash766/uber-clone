@@ -1,15 +1,14 @@
 import { createContext, useContext, ReactNode } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { authorizeUserCheck, getUserDetails } from '../api-client';
+import { useMutation } from '@tanstack/react-query';
+import {  getUserDetails } from '../api-client';
 import { useDispatch, useSelector } from '@repo/redux-store';
 import { RootState } from '@repo/redux-store/store';
 import { setGlobalUserAuth } from '@repo/redux-store/auth';
 
 interface AuthContextType {
-  isLoading: boolean;
   isAuthenticated: boolean;
   user: any;
-  error: Error | null;
+  error: any
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -31,14 +30,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     },
     retry: false,
-    enabled: !globalUser?.isAuthenticated,
   });
 
   const value = {
-    isLoading,
     isAuthenticated: globalUser?.isAuthenticated || false,
     user: globalUser?.data,
-    error
+    error : mutate.isError
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -7,12 +7,13 @@ import {useEffect} from 'react'
 import { logOutUser } from "../../api-client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { setIsUserAuthenticated } from "@repo/redux-store/auth";
+import { setGlobalUserAuth, setIsUserAuthenticated } from "@repo/redux-store/auth";
 
 
 const UserProfileModal = ({openUserProfileModal , setOpenUserProfileModal} : { openUserProfileModal : boolean , setOpenUserProfileModal : (value: boolean) => void }) => {
-  const { user } = useSelector((state: RootState) => state.authUserReducer);
-  const {isAuthenticated} = useSelector((state:RootState)=> state.authUserReducer)
+  const { user } = useSelector((state: RootState) => state.userAuthSliceReducer);
+  const {isAuthenticated} = useSelector((state:RootState)=> state.userAuthSliceReducer)
+  const { globalUser} = useSelector((state: RootState)=> state.globalUserAuthSlice)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   
@@ -30,6 +31,11 @@ toast.success("Logged Out Successfully ")
 setOpenUserProfileModal(false)
 navigate('/', {replace :true})
 dispatch(setIsUserAuthenticated(false))
+dispatch(setGlobalUserAuth({
+  isAuthenticated : false,
+  data:{},
+  role : null
+ }))
 
 console.log(isAuthenticated)
   };
@@ -69,7 +75,7 @@ console.log(isAuthenticated)
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h1 className="font-semibold text-xl">
-              {user?.firstName} {user?.lastName}
+              {globalUser?.firstName} {globalUser?.lastName}
             </h1>
             <div className="flex items-center space-x-1">
               <Star size={16} className="text-black fill-black" />
