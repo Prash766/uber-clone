@@ -5,6 +5,10 @@ const loginUser = async(payload : {email: string , password : string})=>{
     const res = await axiosClient.post("/user/login", payload)
 return res.data.user
 }
+const loginCaptain= async(payload : {email: string , password : string})=>{
+    const res = await axiosClient.post('/captain/login', payload)
+    return res.data.captain
+}
 
 const signUpUser = async(payload : {email: string , password : string})=>{
     console.log("inside the signupUsers")
@@ -21,6 +25,12 @@ const verifyUser = async()=>{
     const res = await axiosClient.get("/user/verify-user")
     console.log("res ",res)
     return res
+}
+
+const authorizeUserCheck = async()=>{
+    const res = await axiosClient.get('/user/auth')
+    return res.data
+
 }
 
 const getUserDetails= async()=>{
@@ -57,12 +67,39 @@ export const getRidePrices  = async(params  : {locations:{
 }
 
 
+////////CAPTAIN ROUTES FUNCTION 
+export const captainVehicleRegistration= async(data: {
+    captainId:any
+    driverLicenseState: string;
+    driverLicenseExpiry: string;
+    vehicleNumber: string;
+    vehicleType :string
+
+})=>{
+    const res =await axiosClient.post('/captain/vehicle-registration', data )
+    return res.data
+}
+
+
+
+export const captainRegister = async(data:  {email: string, 
+    password : string,
+    fullName:string
+})=>{
+    const res = await axiosClient.post('/captain/signup' , data)
+    return res.data
+}
+
+
 export {
     loginUser,
+    loginCaptain,
     signUpUser,
     verifyUser,
     getListOfPlaces,
     getRideRoute,
     getUserDetails,
-    logOutUser
+    logOutUser,
+    authorizeUserCheck
+    
 }

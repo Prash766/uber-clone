@@ -8,11 +8,13 @@ import {
   Input,
   Button,
 } from "@repo/ui";
-import { Link, replace, useNavigate } from "react-router-dom";
+import { Link,  useLocation,  useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "../api-client";
+import { loginCaptain, loginUser } from "../api-client";
 import { Loader } from "lucide-react";
+import { useDispatch } from "@repo/redux-store";
+import { setGlobalUserAuth } from "@repo/redux-store/auth";
 
 type UserLogin = {
   email: string;
@@ -26,13 +28,23 @@ export default function Login() {
     formState: { errors },
   } = useForm<UserLogin>();
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const location = useLocation()
+  console.log(location.pathname)
+  const isCaptainLogin = location.pathname ==='/captain/login'
 
 
   const mutation = useMutation({
-    mutationFn: (data: UserLogin) => loginUser(data),
+    mutationFn: (data: UserLogin) => {
+     return isCaptainLogin? loginCaptain(data) :  loginUser(data)
+    },
     onSuccess: (response) => {
       console.log("Login Successful:", response);
-      navigate('/request-ride', {replace: true})
+      dispatch(setGlobalUserAuth(response))
+        const redirectPath = isCaptainLogin ? '/captain/home' : '/request-ride';
+        console.log("redirect path", redirectPath);
+        navigate(redirectPath, {replace: true});
+      
     },
     onError: (error) => {
       console.error("Login Failed:", error);

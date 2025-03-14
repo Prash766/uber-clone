@@ -11,19 +11,32 @@ import {
     DropdownMenuTrigger,
   } from "@repo/ui";
   import { ChevronDown, CircleHelpIcon } from "lucide-react";
-  import { vehicleOptions } from "../utils/helper";
-  import VehicleOption, { VehicleOptionCardProps } from "../components/VehicleOption";
-  
+  import { vehicleOptions, VehicleOptionType } from "../utils/helper";
+import { useNavigate } from "react-router-dom";
+import { setVehicleType } from "@repo/redux-store/captain";
+import { useDispatch } from "@repo/redux-store";
+import VehicleOption from "../components/VehicleOption";
   const CaptainVehicleSelection = () => {
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+
+    function handleClick(id : string  ){
+      console.log("option", id)
+      dispatch(setVehicleType(id))
+
+      
+    }
+
     return (
-      <div className="font-uber h-screen mt-20 flex items-center justify-center">
-        <Card className="w-[600px]">
+      <div className="font-uber mt-6 flex items-center justify-center">
+        <Card className="w-[500px] h-[600px] flex flex-col">
           <CardHeader className="bg-black">
-            <div className="font-uber text-white flex justify-between items-center">
-              <h2>Uber</h2>
+            <div className="text-white text-lg flex justify-between items-center">
+              <p>Uber</p>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant={"default"}>
+                  <Button className="bg-white text-black hover:" variant={"ghost"}>
                     Help
                     <ChevronDown />
                   </Button>
@@ -48,29 +61,30 @@ import {
             </div>
           </CardHeader>
           <CardDescription className="mt-4 flex justify-center">
-            <h1 className="text-black font-bold text-3xl">
+            <h1 className="text-black font-bold text-2xl">
               Choose how you want to earn with Uber
             </h1>
           </CardDescription>
-          <CardContent className="mt-4">
-            {vehicleOptions.map((option : VehicleOptionCardProps, index) => (
-              <VehicleOption
-                key={index}
-                title={option.title}
-                description={option.description}
-                imageSrc={option.imageSrc}
-                tabs={option.tabs}
-                activeTab={option.activeTab}
-                onTabChange={option.onTabChange}
-                selected={option.selected}
-                onClick={option.onClick}
-              />
+          <CardContent className="flex-grow overflow-y-auto">
+            {vehicleOptions.map((option : VehicleOptionType, index) => (
+              <div key={index} className="mb-4">
+                <VehicleOption
+                id={option.id}
+                  title={option.title}
+                  description={option.description}
+                  imageSrc={option.imageSrc}
+                  tabs={option.tabs}
+                  onClick={(id: string)=>handleClick(id)}
+                />
+              </div>
             ))}
           </CardContent>
+          <div className="w-full  py-4 flex items-center justify-center rounded-lg shadow-xl border-t-0 bg-gray-100  ">
+            <Button onClick={()=> navigate('/captain/vehicle-registration')} className="w-2/3  p-2">Continue</Button>
+          </div>
         </Card>
       </div>
     );
   };
   
   export default CaptainVehicleSelection;
-  

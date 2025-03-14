@@ -16,10 +16,10 @@ import { useDispatch } from "@repo/redux-store";
 import { setDestinationList, setPickUpList } from "@repo/redux-store/ride";
 import { useNavigate } from "react-router-dom";
 
-interface DestinationSuggestion {
-  name: string;
-  address: string;
-}
+// interface DestinationSuggestion {
+//   name: string;
+//   address: string;
+// }
 
 export default function RideRequestForm() {
   const [pickupLocation, setPickupLocation] = useState<string>("");
