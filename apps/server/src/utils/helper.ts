@@ -76,6 +76,7 @@ const userAuthCheck= asyncHandler(async(req , res )=>{
     } catch (error) {
         console.log(error)
         return res.status(400).json({
+            isAuthenticated: false,
             message:"Internal Server Error"
         })
         

@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { z } from "zod";
+import { z, ZodError } from "zod";
 import ApiError from "../utils/ApiError";
 
 const errorMiddleware = async (
-  err: any,
+  err: ApiError | ZodError,
   req: Request,
   res: Response,
   next: NextFunction
@@ -28,7 +28,7 @@ const errorMiddleware = async (
     success: false,
     message,
     errors,
-  });status
+  });
 };
 
 export default errorMiddleware

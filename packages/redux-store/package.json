@@ -10,7 +10,8 @@
     "./auth":"./src/slice/Auth.ts",
     "./user_location":"./src/slice/Location.ts",
     "./ride":"./src/slice/Ride.ts",
-    "./captain":"./src/slice/Captain.ts"
+    "./captain":"./src/slice/Captain.ts",
+    "./socket" : "./src/slice/Socket.ts"
   },
   "keywords": [],
   "author": "",

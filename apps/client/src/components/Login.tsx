@@ -15,6 +15,7 @@ import { loginCaptain, loginUser } from "../api-client";
 import { Loader } from "lucide-react";
 import { useDispatch } from "@repo/redux-store";
 import { setGlobalUserAuth } from "@repo/redux-store/auth";
+import { initSocket } from "@repo/redux-store/socket";
 
 type UserLogin = {
   email: string;
@@ -44,6 +45,7 @@ export default function Login() {
         const redirectPath = isCaptainLogin ? '/captain/home' : '/request-ride';
         console.log("redirect path", redirectPath);
         navigate(redirectPath, {replace: true});
+        dispatch(initSocket({}))
       
     },
     onError: (error) => {

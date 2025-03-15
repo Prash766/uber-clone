@@ -41,4 +41,11 @@ const io = new Server(server, {
   },
 });
 
+io.on("connection", (socket)=>{
+console.log("socket",socket)
+socket.on("disconnect", ()=>{
+  console.log("SOCKET DISCONNECTED")
+})
+})
+
 export { io, server, app };
