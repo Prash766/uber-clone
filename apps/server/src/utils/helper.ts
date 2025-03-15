@@ -1,5 +1,8 @@
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import asyncHandler from './asyncHandler'
+import ApiError from './ApiError'
+import { prisma } from '@repo/db'
 
 
 function generateAuthToken(payload:{id: number , role:string } ) {
@@ -20,8 +23,67 @@ async function  comparePassword(password:string , encryptedPassword:string) {
     
 }
 
+
+const userAuthCheck= asyncHandler(async(req , res )=>{
+    try {
+        const token = req.cookies["auth-token"] ||   (req.headers["Authorization"] as string)?.split("=")[1];
+        if (!token) throw new ApiError("Unauthorized", 400);
+        const decodedToken = jwt.verify(
+          token,
+          process.env.JWT_SECRET as string
+        ) as JwtPayload;
+        if(decodedToken.role==="user"){
+            const userData = await prisma.user.findFirst({
+                where:{
+                    id  : decodedToken.id
+                },
+            })
+            if (!userData) {
+                throw new ApiError("User not found", 404);
+            }
+            const {
+                password,
+                ...user
+            } = userData
+            return res.status(200).json({
+                success: true,
+                role:"user",
+                isAuthenticated:true,
+                data: user
+            })
+            
+        }
+        if(decodedToken.role==="captain"){
+            const captainData = await prisma.captain.findFirst({
+                where:{
+                    id  : decodedToken.id
+                },
+            })
+            if (!captainData) {
+                throw new ApiError("User not found", 404);
+            }
+            const {
+                password,
+                ...captain
+            } = captainData
+            return res.status(200).json({
+                role:"captain",
+                isAuthenticated :true,
+                data: captain
+            })
+        }
+        
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            message:"Internal Server Error"
+        })
+        
+    }
+})
 export {
     generateAuthToken,
     hashPassword,
-    comparePassword
+    comparePassword,
+    userAuthCheck
 }

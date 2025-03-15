@@ -1,5 +1,8 @@
+import { useSelector } from "@repo/redux-store"
+import { RootState } from "@repo/redux-store/store"
 import { Badge } from "@repo/ui"
 import { LucideIcon } from "lucide-react"
+import { useEffect } from "react"
 
 export type TabType = {
   id: string
@@ -8,30 +11,30 @@ export type TabType = {
 }
 
 export type VehicleOptionCardProps = {
+  id:string
   title: string
   description: string
   imageSrc: string
-  tabs?: TabType[]
-  activeTab?: string
-  onTabChange?: (tabId: string) => void
-  selected?: boolean
-  onClick?: () => void
+  tabs: TabType[]
+  onClick: (id: string) => void
 }
 
 const VehicleOption = ({
+  id,
   title,
   description,
   imageSrc,
   tabs = [],
-  activeTab,
-  onTabChange,
-  selected = false,
   onClick,
 }: VehicleOptionCardProps) => {
+  const {vehicleType} = useSelector((state:RootState)=>state.captainRegistrationReducer)
+useEffect(()=>{
+console.log("vehicle type",vehicleType)
+},[vehicleType])
   return (
     <div 
-      className={`p-4 rounded-lg border ${selected ? 'border-2 border-black' : 'border-gray-200'} cursor-pointer`}
-      onClick={onClick}
+      className={`p-4 mt-4 rounded-lg border ${vehicleType===id ? 'border-2 border-black' : 'border-gray-200'} hover:bg-gray-100  cursor-pointer`}
+      onClick={()=>onClick(id)}
     >
       <div className="flex  flex-row items-start justify-between">
         <div className="flex flex-col gap-2">
@@ -49,7 +52,7 @@ const VehicleOption = ({
           </p>
         </div>
         <div className="ml-4">
-          <div className="relative h-16 w-24">
+          <div className="relative h-full w-32">
             <img
               src={imageSrc}
               alt={title}

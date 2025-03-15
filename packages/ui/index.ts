@@ -8,4 +8,8 @@ export * from './src/components/ui/avatar'
 export * from './src/components/ui/badge'
 export * from  './src/components/RideDetailSkeleton'
 export * from './src/components/ui/dropdown-menu'
+export * from './src/components/ui/tabs'
+export * from './src/components/ui/form'
+export * from './src/components/ui/separator'
+export * from './src/components/ui/switch'
  

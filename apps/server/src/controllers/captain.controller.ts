@@ -37,7 +37,11 @@ const loginCaptain = asyncHandler(async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Captain Logged in",
-      captain: filteredCaptains,
+      captain: {...filteredCaptains, 
+        role:"captain",
+        isAuthenticated :true
+
+      },
     });
   } catch (error) {
     return res.status(500).json({
@@ -65,7 +69,12 @@ const signUpCaptain = asyncHandler(async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Captain created Successfully",
-      captain,
+      captain: {
+        ...captain,
+        role:"captain",
+        isAuthenticated :true
+
+      }
     });
   } catch (error: any) {
     if (error.code === "P2002") {

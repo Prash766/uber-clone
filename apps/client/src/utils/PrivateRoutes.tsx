@@ -1,15 +1,15 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { getUserDetails, verifyUser } from "../api-client";
+import { useMutation } from "@tanstack/react-query";
+import {  verifyUser } from "../api-client";
 import { useDispatch, useSelector } from "@repo/redux-store";
 import { RootState } from "@repo/redux-store/store";
 import { Navigate, Outlet } from "react-router-dom";
-import { setIsUserAuthenticated, setUserInfo } from "@repo/redux-store/auth";
+import { setIsUserAuthenticated } from "@repo/redux-store/auth";
 import { useEffect, useState } from "react";
 
 const PrivateRoutes = () => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector(
-    (state: RootState) => state.authUserReducer
+    (state: RootState) => state.userAuthSliceReducer
   );
   const [isVerifying, setIsVerifying] = useState(true);
 
