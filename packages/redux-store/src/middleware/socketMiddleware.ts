@@ -3,7 +3,9 @@ import { Socket } from "socket.io-client";
 import {
   connectionEstablished,
   connectionLost,
+  getNearByVehicles,
   initSocket,
+  setCaptainActive,
 } from "../slice/Socket";
 import SocketService from "../../../../apps/client/src/Socket";
 import { SocketEvent } from "../events";
@@ -34,6 +36,12 @@ const socketMiddleware: Middleware = (store) => {
         });
         return next(newAction)
       }
+    }
+    if(getNearByVehicles.match(action)){
+        socket.socket.emit(SocketEvent.getRides ,action.payload.getRides )
+    }
+    if(setCaptainActive.match(action)){
+        socket.socket.emit(SocketEvent.captainActive,action.payload.socketPayload )
     }
     next(action)
   };

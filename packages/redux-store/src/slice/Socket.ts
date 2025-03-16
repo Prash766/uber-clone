@@ -10,7 +10,9 @@ const socketSlice = createSlice({
     name:"socketSlice",
     initialState :{
         socket : null,
-        isSocketConnected : false
+        isSocketConnected : false,
+        nearByVehicles : [],
+        isCaptainActive  : false
 
     },
     reducers:{
@@ -25,6 +27,12 @@ const socketSlice = createSlice({
         connectionLost  : (state)=>{
             console.log("connection lost")
             state.isSocketConnected= false
+        },
+        getNearByVehicles : (state , action)=>{
+            state.nearByVehicles = action.payload
+        },
+        setCaptainActive : (state , action)=>{
+            state.isCaptainActive = action.payload.isCaptainActive
         }
 
     }
@@ -32,5 +40,5 @@ const socketSlice = createSlice({
 
 
 
-export const {initSocket,connectionEstablished , connectionLost} = socketSlice.actions
+export const {initSocket,connectionEstablished , connectionLost , getNearByVehicles, setCaptainActive} = socketSlice.actions
 export const socketReducer =socketSlice.reducer

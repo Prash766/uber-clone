@@ -12,9 +12,11 @@ import { getListOfPlaces } from "../api-client";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { debounce } from "lodash";
 import PlaceSuggestDropdown from "./ui/PlaceSuggestDropDown/PlaceSuggestDropdown";
-import { useDispatch } from "@repo/redux-store";
+import { useDispatch, useSelector } from "@repo/redux-store";
 import { setDestinationList, setPickUpList } from "@repo/redux-store/ride";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "@repo/redux-store/store";
+import { getNearByVehicles } from "@repo/redux-store/socket";
 
 // interface DestinationSuggestion {
 //   name: string;
@@ -28,8 +30,10 @@ export default function RideRequestForm() {
   const [activeInput, setActiveInput] = useState<
     null | "pickup" | "destination"
   >(null);
+  const {globalUser} = useSelector((state:RootState)=> state.globalUserAuthSlice)
   const formRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate()
+  const { pickupLocation: ridePickUpLocation, destinationLocation: rideDestinationLocation } = useSelector((state:RootState) => state.rideLocationReducer)
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["placesList"],
@@ -69,11 +73,29 @@ export default function RideRequestForm() {
   }, []);
 
   const handleInputChange = useCallback(
-    debounce((value: string, field: "pickup" | "destination") => {
+    debounce((value: string, _: "pickup" | "destination") => {
       mutate(value);
     }, 300),
     []
   );
+
+  function handleClick(){
+    const payload= {
+      userId :  globalUser.data.id,
+      pickupLocation:{
+        lat : ridePickUpLocation.lat,
+        lon : ridePickUpLocation.lon 
+      },
+      destinationLocation :{
+        lat:rideDestinationLocation.lat,
+        lon : rideDestinationLocation.lon
+      }
+    }
+    //socket emitting dispatch
+    dispatch(getNearByVehicles(payload))
+    
+    navigate('/ride-booking')
+  }
 
   return (
     <div
@@ -152,7 +174,7 @@ export default function RideRequestForm() {
           </Select>
         </div>
 
-        <Button onClick={()=>navigate('/ride-booking')} className="w-full font-uber  bg-black text-white hover:bg-black/90 h-12 text-base font-medium rounded-xl">
+        <Button onClick={handleClick} className="w-full font-uber  bg-black text-white hover:bg-black/90 h-12 text-base font-medium rounded-xl">
           See prices
         </Button>
       </div>

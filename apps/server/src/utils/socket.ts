@@ -3,6 +3,7 @@ import http from "http";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import {SocketEvent} from '@repo/redux-store/event'
 
 const app = express();
 
@@ -45,6 +46,15 @@ io.on("connection", (socket)=>{
 console.log("socket",socket)
 socket.on("disconnect", ()=>{
   console.log("SOCKET DISCONNECTED")
+})
+
+socket.on(SocketEvent.getRides ,()=>{
+
+})
+
+socket.on(SocketEvent.captainActive , (data)=>{
+  console.log("SOCKET ACTIVE")
+  // console.log(data)
 })
 })
 

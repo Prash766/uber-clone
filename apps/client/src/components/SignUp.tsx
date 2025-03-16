@@ -13,6 +13,8 @@ import { useMutation } from "@tanstack/react-query";
 import { signUpUser } from "../api-client";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
+import { initSocket } from "@repo/redux-store/socket";
+import { useDispatch } from "@repo/redux-store";
 
 type SignUpUser = {
   firstName: string;
@@ -28,6 +30,7 @@ export default function Signup() {
     formState: { errors },
   } = useForm<SignUpUser>();
   const navigate= useNavigate()
+  const dispatch = useDispatch()
 
   const {
     mutate,
@@ -38,6 +41,7 @@ export default function Signup() {
     onSuccess: () => {
       toast.success("Signed Up Successffully");
       navigate('/ride-booking',{replace:true})
+      dispatch(initSocket({}))
       
     },
     onError: (error) => {

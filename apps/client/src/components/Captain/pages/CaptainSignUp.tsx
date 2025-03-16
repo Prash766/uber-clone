@@ -17,6 +17,8 @@ import { captainRegister } from "../../../api-client";
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import { initSocket } from "@repo/redux-store/socket";
+import { setGlobalUserAuth } from "@repo/redux-store/auth";
 
 type FormValues = {
   fullName: string;
@@ -32,8 +34,10 @@ const CaptainSignUp = () => {
     mutationKey: ["captainSignup"],
     mutationFn: (data: FormValues) => captainRegister(data),
     onSuccess:(data)=>{
-      navigate("/captain/vehicle");
-      dispatch(setEmailandId(data.captain));
+      navigate("/captain/vehicle" , {replace:true});
+      dispatch(setEmailandId(data.captain)); 
+      dispatch(setGlobalUserAuth(data.captain))
+      dispatch(initSocket({}))
 
     },
     onError:(error:AxiosError)=>{
