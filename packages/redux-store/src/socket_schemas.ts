@@ -4,17 +4,30 @@ export type CaptainActive= {
         lat : number,
         lon : number
     },
-    captain:{
-        id:number,
-        firstName:string,
-        lastName: string,
-        vehicleNumber: string,
-        email: string,
-        status:"active" | "inactive"
+    data:{
 
+        captain:{
+            id:number,
+            fullName:string
+            vehicleNumber: string,
+            email: string,
+            status:"active" | "inactive"
+        },
+        vehicle:{
+            
+        }
     }
 }
 
+
+export type Socket_Captain_Type ={ 
+        id:number,
+        fullName:string
+        vehicleNumber: string,
+        email: string,
+        status:"active" | "inactive"
+    
+}
 export enum VehicleType{
     Sedan ,
     SUV,
@@ -24,8 +37,9 @@ export enum VehicleType{
   }
 
 export type Vehicle = {
+    id:number,
+    captainId : number,
     vehicleNumber  : string ,
-    vehicleLogo   :string,
     vehicleType: VehicleType
 }
 

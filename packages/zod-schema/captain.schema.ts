@@ -28,7 +28,7 @@ export const signUpCaptainSchema = z.object({
     export const vehicleRegistrationSchema = z.object({
       // Driver Information
       firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
-      lastName: z.string().min(2, { message: "Last name must be at least 2 characters." }).optional(),
+      lastName: z.string().min(2, { message: "Last name must be at least 2 characters." }).optional().or(z.literal('')),
       email: z.string().email({ message: "Please enter a valid email address." }),
       phone: z.string().min(10, { message: "Please enter a valid phone number." }),
       driverLicenseState: z.string().min(1, { message: "State is required." }),

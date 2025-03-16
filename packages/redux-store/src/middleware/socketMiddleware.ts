@@ -5,7 +5,7 @@ import {
   connectionLost,
   getNearByVehicles,
   initSocket,
-  setCaptainActive,
+  sendCaptainActiveSocketEvent,
 } from "../slice/Socket";
 import SocketService from "../../../../apps/client/src/Socket";
 import { SocketEvent } from "../events";
@@ -40,8 +40,9 @@ const socketMiddleware: Middleware = (store) => {
     if(getNearByVehicles.match(action)){
         socket.socket.emit(SocketEvent.getRides ,action.payload.getRides )
     }
-    if(setCaptainActive.match(action)){
-        socket.socket.emit(SocketEvent.captainActive,action.payload.socketPayload )
+    if(sendCaptainActiveSocketEvent.match(action)){
+      console.log("action payload inside the captain active socket ",action.payload)
+        socket.socket.emit(SocketEvent.captainActive,action.payload )
     }
     next(action)
   };

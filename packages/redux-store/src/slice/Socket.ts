@@ -31,8 +31,11 @@ const socketSlice = createSlice({
         getNearByVehicles : (state , action)=>{
             state.nearByVehicles = action.payload
         },
-        setCaptainActive : (state , action)=>{
-            state.isCaptainActive = action.payload.isCaptainActive
+        sendCaptainActiveSocketEvent : (state , action)=>{
+return 
+        },
+        toggleCaptainActive : (state , action)=>{
+            state.isCaptainActive = action.payload
         }
 
     }
@@ -40,5 +43,5 @@ const socketSlice = createSlice({
 
 
 
-export const {initSocket,connectionEstablished , connectionLost , getNearByVehicles, setCaptainActive} = socketSlice.actions
+export const {initSocket,connectionEstablished , connectionLost , getNearByVehicles, sendCaptainActiveSocketEvent , toggleCaptainActive} = socketSlice.actions
 export const socketReducer =socketSlice.reducer
