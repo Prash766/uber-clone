@@ -170,13 +170,22 @@ const captainVehicleRegistration = asyncHandler(async(req , res)=>{
 
     })
  ] )
+ const globalUser= {
+  data : {
+    captain,
+    vehicle
+  },
+  isAuthenticated:true,
+  role: "captain"
+ }
  console.log("vehicle" , vehicle)
  console.log("captain" , captain)
  return res.status(200).json({
   success:true,
   message:"Registered Successfully ! ",
   captain ,
-  vehicle
+  vehicle,
+  globalUser
  })
     
     

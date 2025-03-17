@@ -54,11 +54,17 @@ const userAuthCheck= asyncHandler(async(req , res )=>{
             
         }
         if(decodedToken.role==="captain"){
-            const captainData = await prisma.captain.findFirst({
+            const [captainData , vehicleData] = await Promise.all( [prisma.captain.findFirst({
                 where:{
                     id  : decodedToken.id
                 },
+            }) ,
+            prisma.vehicle.findFirst({
+                where:{
+                    captainId: decodedToken.id
+                }
             })
+        ] )
             if (!captainData) {
                 throw new ApiError("User not found", 404);
             }
@@ -69,7 +75,10 @@ const userAuthCheck= asyncHandler(async(req , res )=>{
             return res.status(200).json({
                 role:"captain",
                 isAuthenticated :true,
-                data: captain
+                data: {
+                    captain,
+                    vehicleData
+                }
             })
         }
         
