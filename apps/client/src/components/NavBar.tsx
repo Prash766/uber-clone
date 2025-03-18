@@ -92,7 +92,7 @@ const NavBar = ({ isPending }: { isPending: boolean }) => {
               <ChevronDown size={10} />
             </Button>
           ) : (
-            <CaptainButton/>
+           globalUser.data.onboarding==='pending' ?<span className="font-uber">Welcome</span> :  <CaptainButton/>
           )
         ) : (
           <ul className="text-white font-semi-bold flex space-x-8 mr-10 cursor-pointer">

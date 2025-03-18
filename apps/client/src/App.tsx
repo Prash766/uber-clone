@@ -10,6 +10,7 @@ import CaptainVehicleSelection from "./components/Captain/pages/CaptainVehicleSe
 import CaptainVehicleRegistration from "./components/Captain/pages/CaptainVehicleRegistration";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 import { useAuth } from "./hooks/useAuth";
+import CaptainHome from "./components/Captain/pages/CaptainHome";
 
 const App = () => {
   const { globalUser, isLoading } = useAuth();
@@ -35,7 +36,7 @@ const App = () => {
         {/* Captain Protected Routes */}
         <Route element={<ProtectedRoutes roles={["captain"]} />}>
           <Route path="/captain" element={<>HELLO THERE ITS CAPTAIN</>} />
-          <Route path="/captain/home" element={<>HOME</>} />
+          <Route path="/captain/home" element={<CaptainHome/>} />
           <Route
             path="/captain/vehicle"
             element={

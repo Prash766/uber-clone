@@ -41,6 +41,7 @@ import { captainVehicleRegistration } from "../../../api-client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
+import { setGlobalUserAuth } from "@repo/redux-store/auth";
 
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 20 }, (_, i) =>
@@ -52,15 +53,14 @@ export default function CaptainVehicleRegistration() {
     (state: RootState) => state.captainRegistrationReducer
   );
   const dispatch = useDispatch();
-  const { email, fullName, id } = useSelector(
-    (state: RootState) => state.captainDetailsReducer
-  );
+  const  {globalUser} = useSelector((state :RootState)=> state.globalUserAuthSlice)
+  console.log("global use " , globalUser)
   const form = useForm<vehicleRegistrationType>({
     resolver: zodResolver(vehicleRegistrationSchema),
     defaultValues: {
-      firstName: fullName.split(" ")[0],
-      lastName: fullName.split(" ")[1],
-      email: email,
+      firstName: globalUser.data.fullName.split(" ")[0],
+      lastName: globalUser.data.fullName.split(" ")[1]!=="" ? globalUser.data.fullName.split(" ")[1]:null ,
+      email: globalUser.data.email,
       phone: "",
       driverLicenseState: "",
       driverLicenseExpiry: "",
@@ -90,6 +90,7 @@ export default function CaptainVehicleRegistration() {
       toast.success(`${data.message}`);
       dispatch(setCaptainRegistration(data.captain))
       dispatch(setVehicleDetails(data.vehicle))
+      dispatch(setGlobalUserAuth(data.globalUser))
       navigate("/captain/home", { replace: true });
     },
     onError: (error: AxiosError) => {
@@ -102,7 +103,7 @@ export default function CaptainVehicleRegistration() {
     console.log("Form Values:", values);
     console.log(vehicleNumber , driverLicenseExpiry, driverLicenseState)
     mutate.mutate({
-      captainId: id,
+      captainId: globalUser.data.id,
       vehicleNumber: values.vehicleNumber,
       driverLicenseExpiry : values.driverLicenseExpiry,
       vehicleType,
@@ -146,13 +147,13 @@ export default function CaptainVehicleRegistration() {
                     <FormField
                       control={form.control}
                       name="firstName"
-                      render={() => (
+                      render={(field) => (
                         <FormItem>
                           <FormLabel>First Name</FormLabel>
                           <FormControl>
                             <Input
+                            {...field }
                               placeholder="John"
-                              value={fullName.split(" ")[0]}
                               readOnly
                             />
                           </FormControl>
@@ -163,13 +164,12 @@ export default function CaptainVehicleRegistration() {
                     <FormField
                       control={form.control}
                       name="lastName"
-                      render={() => (
+                      render={(field) => (
                         <FormItem>
                           <FormLabel>Last Name</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Doe"
-                              value={fullName.split(" ")[1]}
+                            {...field }
                               readOnly
                             />
                           </FormControl>

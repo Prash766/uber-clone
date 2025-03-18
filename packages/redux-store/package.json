@@ -12,7 +12,8 @@
     "./ride":"./src/slice/Ride.ts",
     "./captain":"./src/slice/Captain.ts",
     "./socket" : "./src/slice/Socket.ts",
-    "./event":"./src/events.ts"
+    "./event":"./src/events.ts",
+    "./socket_schema": "./src/socket_schemas.ts"
   },
   "keywords": [],
   "author": "",

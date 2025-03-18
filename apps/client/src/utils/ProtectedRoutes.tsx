@@ -29,7 +29,8 @@ const ProtectedRoutes = ({ roles }: ProtectedRoutesProps): ReactNode => {
       navigate(userRole === "user" ? "/" : "/captain/home", { replace: true });
     }
     else if(isAuthenticated && roles.includes(userRole)){
-      dispatch(initSocket({}))  
+      dispatch(initSocket({}))
+        
       if(globalUser.data.onboarding==="pending"){
         navigate('/captain/vehicle', {replace:true})
       }

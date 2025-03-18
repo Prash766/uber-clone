@@ -1,42 +1,26 @@
 import { useDispatch, useSelector } from "@repo/redux-store"
-import { setCaptainActive } from "@repo/redux-store/socket"
+import {  toggleCaptainActive } from "@repo/redux-store/socket"
 import { RootState } from "@repo/redux-store/store"
 import { Label, Switch } from "@repo/ui"
-import {  useEffect, useState } from "react"
-import { CaptainActive } from "../../../utils/socket-schemas/schema"
+import {  useEffect } from "react"
 
 const CaptainButton = () => {
-    const [isOnline  , setIsOnline] = useState<boolean>(false)
+const {isCaptainActive} = useSelector((state:RootState)=> state.socketReducer) 
     const dispatch = useDispatch()
-    const {globalUser} = useSelector((state:RootState)=> state.globalUserAuthSlice)
 
     useEffect(()=>{
-        console.log("use efect runs")
-        if(isOnline){
-            const payload={
-               socketPayload :{ 
-                captainId:globalUser.data.id,
-                captain:globalUser.data,
-                location:{
-                    lat : 23.5353,     //HARDCODED VALUES
-                    lon :24.56565
-                }
-               } as CaptainActive,
-               isCaptainActive : true
+        console.log("is captian active" , isCaptainActive)
 
-            } 
-            dispatch(setCaptainActive(payload))
-        }
-    }, [isOnline])
+    }, [isCaptainActive])
     
   return (
     <div className="font-uber flex gap-4 items-center ">
-        <Label htmlFor="status">{isOnline ?"Online" : "Offline"}</Label>
+        <Label htmlFor="status">{isCaptainActive ?"Online" : "Offline"}</Label>
         <Switch
         className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500" 
-        checked={isOnline}
+        checked={isCaptainActive}
         onCheckedChange={(e)=>{
-            setIsOnline(e)
+            dispatch(toggleCaptainActive(e))
         }}
          />
 
