@@ -14,8 +14,12 @@ import CaptainHome from "./components/Captain/pages/CaptainHome";
 
 const App = () => {
   const { globalUser, isLoading } = useAuth();
+  console.log("global user",globalUser)
+  console.log("loading", isLoading)
+
 
   if (isLoading) {
+    console.log("hi her e")
     return null;
   }
 
@@ -40,7 +44,7 @@ const App = () => {
           <Route
             path="/captain/vehicle"
             element={
-              globalUser?.data?.onboarding === "pending" ? (
+              globalUser.role==="captain" &&  globalUser?.data?.captain.onboarding === "pending" ? (
                 <CaptainVehicleSelection />
               ) : (
                 <Navigate to="/captain/home" replace />
@@ -50,7 +54,7 @@ const App = () => {
           <Route
             path="/captain/vehicle-registration"
             element={
-              globalUser?.data?.onboarding === "pending" ? (
+              globalUser.role==="captain" && globalUser?.data?.captain.onboarding === "pending" ? (
                 <CaptainVehicleRegistration />
               ) : (
                 <Navigate to="/captain/home" replace />

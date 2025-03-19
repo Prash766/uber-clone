@@ -3,7 +3,7 @@ import { parsePlaces } from "./utils/helpers";
 
 const loginUser = async (payload: { email: string; password: string }) => {
   const res = await axiosClient.post("/user/login", payload);
-  return res.data.user;
+  return res.data;
 };
 const loginCaptain = async (payload: { email: string; password: string }) => {
   const res = await axiosClient.post("/captain/login", payload);
@@ -13,7 +13,7 @@ const loginCaptain = async (payload: { email: string; password: string }) => {
 const signUpUser = async (payload: { email: string; password: string }) => {
   console.log("inside the signupUsers");
   const res = await axiosClient.post("/user/signup", payload);
-  return res.data.user;
+  return res.data.captain;
 };
 
 const logOutUser = async () => {

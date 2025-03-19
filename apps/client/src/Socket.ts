@@ -7,7 +7,9 @@ class SocketConnection implements SocketInterface {
   public socket: Socket;
   public socketEndpoint: string = import.meta.env.VITE_PUBLIC_SOCKET_URL;
   constructor() {
-    this.socket = io(this.socketEndpoint);
+    this.socket = io(this.socketEndpoint, {
+      withCredentials : true
+    });
   }
 }
 
