@@ -23,6 +23,15 @@ async function  comparePassword(password:string , encryptedPassword:string) {
     
 }
 
+ function decodeToken(token  : string){
+    try {
+        const decodedToken =  jwt.verify(token , process.env.JWT_SECRET as string)
+        return decodedToken
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 
 const userAuthCheck= asyncHandler(async(req , res )=>{
     try {
@@ -73,6 +82,7 @@ const userAuthCheck= asyncHandler(async(req , res )=>{
                 ...captain
             } = captainData
             return res.status(200).json({
+                success: true,
                 role:"captain",
                 isAuthenticated :true,
                 data: {
@@ -91,9 +101,11 @@ const userAuthCheck= asyncHandler(async(req , res )=>{
         
     }
 })
+
 export {
     generateAuthToken,
     hashPassword,
     comparePassword,
-    userAuthCheck
+    userAuthCheck,
+    decodeToken
 }
