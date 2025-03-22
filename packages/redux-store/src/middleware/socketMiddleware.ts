@@ -6,9 +6,11 @@ import {
   getNearByVehicles,
   initSocket,
   sendCaptainActiveSocketEvent,
+  socketUpdateCaptainLocation,
 } from "../slice/Socket";
 import SocketService from "../../../../apps/client/src/Socket";
-import { SocketEvent } from "../events";
+import { CaptainSocketEvent, SocketEvent } from "../events";
+import { setNearByVehicles } from "@repo/redux-store/vehicles";
 interface SocketInterface {
   socket: Socket;
 }
@@ -16,7 +18,6 @@ const socketMiddleware: Middleware = (store) => {
   let socket: SocketInterface;
 
   return (next) => (action) => {
-    console.log("init soket action creator", initSocket);
     if (initSocket.match(action)) {
       if (!socket && typeof window !== undefined) {
         socket = SocketService.createSocket();
@@ -34,15 +35,27 @@ const socketMiddleware: Middleware = (store) => {
           console.log("disconnected")
           store.getState()
         });
+
+        socket.socket.on(SocketEvent.getRides, (data)=>{
+          console.log("socket get RIDES DATA", data)
+          store.dispatch(setNearByVehicles(data))
+          
+        })
         return next(newAction)
       }
     }
     if(getNearByVehicles.match(action)){
-        socket.socket.emit(SocketEvent.getRides ,action.payload.getRides )
+      console.log("socket middleware near vvehiels")
+      console.log("action payload", action)
+        socket.socket.emit(SocketEvent.getRides ,action.payload )
     }
     if(sendCaptainActiveSocketEvent.match(action)){
       console.log("action payload inside the captain active socket ",action.payload)
-        socket.socket.emit(SocketEvent.captainActive,action.payload )
+        socket.socket.emit(CaptainSocketEvent.captainActive,action.payload )
+    }
+    if(socketUpdateCaptainLocation.match(action)){
+      console.log("socket update",action.payload )
+      socket.socket.emit(CaptainSocketEvent.captainLocationUpdate , action.payload)
     }
     next(action)
   };

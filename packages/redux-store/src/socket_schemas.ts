@@ -1,11 +1,7 @@
 export type CaptainActive= {
     captainId: number,
-    location:{
-        lat : number,
-        lon : number
-    },
+    location:SocketLocationType
     data:{
-
         captain:{
             id:number,
             fullName:string
@@ -13,10 +9,13 @@ export type CaptainActive= {
             email: string,
             status:"active" | "inactive"
         },
-        vehicle:{
-            
-        }
+        vehicle:Vehicle
     }
+}
+
+export type SocketLocationType= {
+    latitude:number,
+    longitude:number
 }
 
 
@@ -40,6 +39,7 @@ export type Vehicle = {
     id:number,
     captainId : number,
     vehicleNumber  : string ,
+    vehicleImage: string,
     vehicleType: VehicleType
 }
 
