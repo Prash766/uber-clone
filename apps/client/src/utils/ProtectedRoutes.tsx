@@ -17,25 +17,36 @@ const ProtectedRoutes = ({ roles }: ProtectedRoutesProps): ReactNode => {
   const dispatch = useDispatch()
 
   const isAuthenticated = globalUser?.isAuthenticated;
-  const userRole = globalUser?.role;
-
-  useEffect(() => {
+  const userRole = globalUser?.role as ROLES
+  
+useEffect(() => {
     if (!globalUser || Object.keys(globalUser).length === 0) return
 
     if (!isAuthenticated) {
-      console.log("hi tehre")
       navigate("/", { replace: true })
     } else if (!roles.includes(userRole)) {
       navigate(userRole === "user" ? "/" : "/captain/home", { replace: true });
     }
     else if(isAuthenticated && roles.includes(userRole)){
       dispatch(initSocket({}))
-        
-      if(globalUser.data.onboarding==="pending"){
-        navigate('/captain/vehicle', {replace:true})
+      if (
+        userRole === "captain" &&
+        globalUser?.data?.captain &&
+        globalUser?.data?.captain?.onboarding === "pending"
+      ) {
+        navigate("/captain/vehicle", { replace: true });
       }
+      
     }
   }, [globalUser, isAuthenticated, userRole]);
+  if (!globalUser || Object.keys(globalUser).length === 0) {
+    return null
+  }
+
+  if (!isAuthenticated || !roles.includes(userRole)) {
+    return null
+  }
+
 
   return <Outlet />
 };

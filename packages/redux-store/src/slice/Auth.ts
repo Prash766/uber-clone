@@ -6,6 +6,12 @@ export interface User {
   user: PrismaUser;
 }
 
+export interface GlobalUser  {
+  isAuthenticated: boolean,
+  role : string,
+  data:any
+}
+
 const userAuthSlice = createSlice({
   name: "userAuthSlice",
   initialState: {
@@ -25,11 +31,11 @@ const userAuthSlice = createSlice({
 const globalAuthSlice = createSlice({
   name: "globalAuthSlice",
   initialState: {
-    globalUser: {} as any,    ///todo later edit it properly 
+    globalUser: {} as GlobalUser, 
   },
   reducers: {
     setGlobalUserAuth: (state, action) => {
-      state.globalUser = { ...state, ...action.payload };
+      state.globalUser = { ...state.globalUser, ...action.payload };
     },
   },
 });
