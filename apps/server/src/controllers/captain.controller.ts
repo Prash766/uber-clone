@@ -40,7 +40,7 @@ const loginCaptain = asyncHandler(async (req, res) => {
       message: "Captain Logged in",
       captain: {
         data:{
-          ...filteredCaptains, 
+          captain:{...filteredCaptains}, 
         },
         role:"captain",
         isAuthenticated :true
@@ -75,7 +75,7 @@ const signUpCaptain = asyncHandler(async (req, res) => {
       message: "Captain created Successfully",
       captain: {
         data:{
-          ...captain, 
+         captain:{ ...captain}, 
         },
         role:"captain",
         isAuthenticated :true
@@ -95,7 +95,7 @@ const signUpCaptain = asyncHandler(async (req, res) => {
 
 const completeProfileCaptain = asyncHandler(async (req, res) => {
   try {
-    const { vehicleType, color, vehicleNumber } = req.body;
+    const { vehicleType, color, vehicleNumber ,vehicleImage } = req.body;
     const [captain, vehicle] = await Promise.all([
       await prisma.captain.update({
         where: {
@@ -111,6 +111,7 @@ const completeProfileCaptain = asyncHandler(async (req, res) => {
           color,
           vehicleNumber,
           vehicleType,
+          vehicleImage, 
           captainId: req.user.id,
         },
       }),
@@ -148,6 +149,7 @@ const captainVehicleRegistration = asyncHandler(async(req , res)=>{
       driverLicenseState: string;
       driverLicenseExpiry: string;
       vehicleType: any;
+      vehicleImage:string,
       vehicleNumber: string;
 
     }
@@ -156,6 +158,7 @@ const captainVehicleRegistration = asyncHandler(async(req , res)=>{
         captainId : vehicleDetails.captainId,
         vehicleNumber: vehicleDetails.vehicleNumber,
         vehicleType: vehicleDetails.vehicleType,
+        vehicleImage:vehicleDetails.vehicleImage,
         licenseExpiry: new Date(vehicleDetails.driverLicenseExpiry),
         licenseState: vehicleDetails.driverLicenseState
       }

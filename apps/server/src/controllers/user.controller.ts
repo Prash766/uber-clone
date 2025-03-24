@@ -43,12 +43,10 @@ const loginUser = asyncHandler(async (req, res, next) => {
     res.cookie("auth-token", token, tokenOptions);
     return res.status(200).json({
       success: true,
-      message: "User Logged in",
-      user: {...filteredUser,
-role:"user",
-isAuthenticated :true
-      },
-    });
+      role:"user",
+      isAuthenticated:true,
+      data: {...filteredUser}
+  })
   } catch (error) {
     console.log(error)
     return res.status(500).json({
@@ -75,13 +73,10 @@ const signUpUser = asyncHandler(async (req, res) => {
     res.cookie("auth-token", token, tokenOptions);
     return res.status(200).json({
       success: true,
-      message: "User created Successfully",
-      user:{
-        ...user,
-        role:"user",
-        isAuthenticated :true
-      }
-    });
+      role:"user",
+      isAuthenticated:true,
+      data: {...user}
+  })
   } catch (error: any) {
     if (error.code === "P2002") {
       return res.status(400).json({ error: "Email already in use." });

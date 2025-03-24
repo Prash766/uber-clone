@@ -5,7 +5,7 @@ import { createRideResponse } from "../utils/ride";
 const ridePricing= asyncHandler(async(req ,res)=>{
 try {
     const  {locations}= req.body
-    console.log(locations)
+    // console.log(locations)
     const destination = locations.destination 
     const pickup = locations.pickup as {latitude : number , longitude : number}
     
@@ -27,21 +27,21 @@ try {
                     destination.latitude
                 ]
             ],
-            optimize:"true"
         }  
       const response = await axios.post(`${baseUrl}key=${apiKey}`,route_data)
+    //   console.log("price route",response)
       return response.data;
     };    
-    const [carRes, bikeRes] = await Promise.all([getRoute("car"), getRoute("scooter")]);
+    const [carRes, bikeRes] = await Promise.all([getRoute("car"), getRoute("bike")]);
       const distance = carRes.paths[0].distance
       const bikeDuration = bikeRes.paths[0].time/1000
       const carDuration = carRes.paths[0].time/1000
       
-    console.log("car ride pricing response", carRes)
-    console.log("Bike ride pricing response", bikeRes)
+    // console.log("car ride pricing response", carRes)
+    // console.log("Bike ride pricing response", bikeRes)
 
       const response  =  createRideResponse(distance  , bikeDuration , carDuration , "INR")
-      console.log("edited RESPOSNE",response)
+    //   console.log("edited RESPOSNE",response)
       return res.status(200).json({
         success:true,
         response
@@ -77,11 +77,11 @@ const rideRoute = asyncHandler(async(req , res)=>{
             }
             
           const response = await axios.post(`${baseUrl}key=${apiKey}`,route_data)
-          console.log("RIDE ROUTE RESPONSE", response)
+        //   console.log("RIDE ROUTE RESPONSE", response)
           const route_time_in_sec = response.data.paths[0].time/1000
           const route_time_in_min = Math.ceil(route_time_in_sec/60)
           let route_duration= null
-          console.log("route in time", route_time_in_min)
+        //   console.log("route in time", route_time_in_min)
           if(route_time_in_min>59){
             const hours = Math.floor(route_time_in_min / 60);
     const remainingMinutes = Math.ceil(route_time_in_min % 60);
@@ -90,7 +90,7 @@ const rideRoute = asyncHandler(async(req , res)=>{
           else{
             route_duration = `${route_time_in_min} min`
           }
-          console.log("ride route", response.data.paths[0])
+        //   console.log("ride route", response.data.paths[0])
         return res.status(200).json({
             success:true,
             distance : Math.floor(response.data.paths[0].distance),
