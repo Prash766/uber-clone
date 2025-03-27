@@ -1,0 +1,5 @@
+export const LOCATION_UPDATE_THRESHOLD = 100
+export const MIN_BATCH_SIZE = 5
+export const MINIMUM_RANGE_VEHICLE= 3 //3 KM
+
+export const MAXIMUM_RANGE_VEHICLE = 10 
