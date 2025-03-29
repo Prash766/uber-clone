@@ -6,11 +6,13 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions", "typedSql"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions =    [postgis]
 }
 
 enum VehicleType{
@@ -68,6 +70,7 @@ model Vehicle {
   color          String?
   captainId      Int         @unique
   vehicleType    VehicleType
+  vehicleImage   String
   vehicleNumber  String
   licenseNumber  String?   
   licenseState   String?   
@@ -79,11 +82,11 @@ model Vehicle {
 model CaptainLocation {
   id Int @id @default(autoincrement())
   captainId Int @unique
-  latitude Float
-  Longitude Float 
+  coordinates Unsupported("geometry(Point , 4326)")
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+updatedAt DateTime @default(now()) @updatedAt
   captain Captain @relation(fields: [captainId], references: [id] ,onDelete: Cascade)
+  @@index([coordinates], name: "location_idx", type: Gist)
 }
 
 model Trip {
