@@ -1,6 +1,6 @@
 import { Palette, Utensils } from "lucide-react";
-import { motion } from "framer-motion";
-import { PlacesType } from "@repo/redux-store/ride";
+import { AcceleratedAnimation, motion } from "framer-motion";
+import { PlacesType, setDestinationlocationDisplayName, setPickUplocationDisplayName } from "@repo/redux-store/ride";
 import { useDispatch } from "@repo/redux-store";
 import { setPickupLocation, setDestinationLocation } from "@repo/redux-store/ride";
 
@@ -26,10 +26,12 @@ const PlaceSuggestionItem = ({
     // };
     if (locationType === "pickup") {
         setPickupPlace(place.display_name)
+        dispatch(setPickUplocationDisplayName(place.display_name))
         dispatch(setPickupLocation(place));
         isOpen()
     } else {
       dispatch(setDestinationLocation(place));
+      dispatch(setDestinationlocationDisplayName(place.display_name))
       setDestinationPlace(place.display_name)
       isOpen()
     }

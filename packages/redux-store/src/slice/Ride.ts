@@ -37,6 +37,8 @@ export interface Route{
 export interface RideLocation {
     pickupLocation: PlacesType,
     destinationLocation: PlacesType,
+    pickUpLocationName : string,
+    destinationLocationName: string,
     route: Route,
     rideVehicleList: VehicleResponse
 
@@ -133,6 +135,8 @@ const rideLocationSlice = createSlice({
         }
       ]
      },
+     destinationLocationName:"",
+     pickUpLocationName : "",
      rideVehicleList: {
       products: {
         tiers: [
@@ -146,6 +150,12 @@ const rideLocationSlice = createSlice({
       },
       setDestinationLocation: (state, action) => {
         state.destinationLocation = action.payload;
+      },
+      setPickUplocationDisplayName : (state , action)=>{
+        state.pickUpLocationName= action.payload
+      },
+      setDestinationlocationDisplayName : (state , action)=>{
+        state.destinationLocationName= action.payload
       },
       setRoutePolyline:(state , action)=>{
         state.route= action.payload
@@ -181,6 +191,6 @@ const rideLocationSlice = createSlice({
 // })
   
 export const { setPickUpList, setDestinationList } = placesListSlice.actions;
-export const {setPickupLocation , setDestinationLocation , setRoutePolyline ,setRideVehicleList } = rideLocationSlice.actions
+export const {setPickupLocation , setDestinationLocation , setRoutePolyline ,setRideVehicleList , setDestinationlocationDisplayName,setPickUplocationDisplayName } = rideLocationSlice.actions
 export const placeListReducer  = placesListSlice.reducer;
 export const rideLocationReducer= rideLocationSlice.reducer
