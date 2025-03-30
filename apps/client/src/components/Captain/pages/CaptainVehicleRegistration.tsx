@@ -52,15 +52,17 @@ export default function CaptainVehicleRegistration() {
   const { vehicleType } = useSelector(
     (state: RootState) => state.captainRegistrationReducer
   );
+  console.log("vehicle type",vehicleType)
   const dispatch = useDispatch();
   const  {globalUser} = useSelector((state :RootState)=> state.globalUserAuthSlice)
   console.log("global use " , globalUser)
+  const [firstName, lastName] = globalUser.data.captain.fullName.split(" ");
   const form = useForm<vehicleRegistrationType>({
     resolver: zodResolver(vehicleRegistrationSchema),
     defaultValues: {
-      firstName: globalUser.data.fullName.split(" ")[0],
-      lastName: globalUser.data.fullName.split(" ")[1]!=="" ? globalUser.data.fullName.split(" ")[1]:null ,
-      email: globalUser.data.email,
+      firstName,
+      lastName : lastName || "" ,
+      email: globalUser.data.captain.email,
       phone: "",
       driverLicenseState: "",
       driverLicenseExpiry: "",
@@ -71,7 +73,7 @@ export default function CaptainVehicleRegistration() {
   });
   const navigate = useNavigate();
 
-  const { vehicleNumber, driverLicenseExpiry, driverLicenseState } =
+  const { vehicleNumber, driverLicenseExpiry, driverLicenseState , vehicleImage } =
     useSelector((state: RootState) => state.captainRegistrationReducer);
 
   const mutate = useMutation({
@@ -79,6 +81,7 @@ export default function CaptainVehicleRegistration() {
     mutationFn: (data: {
       captainId: any;
       vehicleType: string;
+      vehicleImage:string
       vehicleNumber: string;
       driverLicenseState: string;
       driverLicenseExpiry: string;
@@ -103,10 +106,11 @@ export default function CaptainVehicleRegistration() {
     console.log("Form Values:", values);
     console.log(vehicleNumber , driverLicenseExpiry, driverLicenseState)
     mutate.mutate({
-      captainId: globalUser.data.id,
+      captainId: globalUser.data.captain.id,
       vehicleNumber: values.vehicleNumber,
       driverLicenseExpiry : values.driverLicenseExpiry,
       vehicleType,
+      vehicleImage,
       driverLicenseState :values.driverLicenseState,
     });
   }
@@ -152,7 +156,8 @@ export default function CaptainVehicleRegistration() {
                           <FormLabel>First Name</FormLabel>
                           <FormControl>
                             <Input
-                            {...field }
+                            type="text"
+                            value={form.watch("firstName")} // Ensure correct binding
                               placeholder="John"
                               readOnly
                             />
@@ -169,7 +174,8 @@ export default function CaptainVehicleRegistration() {
                           <FormLabel>Last Name</FormLabel>
                           <FormControl>
                             <Input
-                            {...field }
+                            type="text"
+                            value={form.watch("lastName")} // Ensure correct binding
                               readOnly
                             />
                           </FormControl>

@@ -13,7 +13,7 @@ import {
   import { ChevronDown, CircleHelpIcon } from "lucide-react";
   import { vehicleOptions, VehicleOptionType } from "../utils/helper";
 import { useNavigate } from "react-router-dom";
-import { setVehicleType } from "@repo/redux-store/captain";
+import { setVehicleImage, setVehicleType } from "@repo/redux-store/captain";
 import { useDispatch } from "@repo/redux-store";
 import VehicleOption from "../components/VehicleOption";
   const CaptainVehicleSelection = () => {
@@ -21,11 +21,10 @@ import VehicleOption from "../components/VehicleOption";
     const dispatch = useDispatch()
 
 
-    function handleClick(id : string  ){
+    function handleClick(id : string, img:string  ){
       console.log("option", id)
       dispatch(setVehicleType(id))
-
-      
+      dispatch(setVehicleImage(img))
     }
 
     return (
@@ -73,8 +72,9 @@ import VehicleOption from "../components/VehicleOption";
                   title={option.title}
                   description={option.description}
                   imageSrc={option.imageSrc}
+                  mapImgSrc={option.mapImgSrc}
                   tabs={option.tabs}
-                  onClick={(id: string)=>handleClick(id)}
+                  onClick={(id: string, img:string)=>handleClick(id, img)}
                 />
               </div>
             ))}
