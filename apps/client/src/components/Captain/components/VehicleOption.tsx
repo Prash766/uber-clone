@@ -15,8 +15,9 @@ export type VehicleOptionCardProps = {
   title: string
   description: string
   imageSrc: string
+  mapImgSrc:string
   tabs: TabType[]
-  onClick: (id: string) => void
+  onClick: (id: string , img:string) => void
 }
 
 const VehicleOption = ({
@@ -24,6 +25,7 @@ const VehicleOption = ({
   title,
   description,
   imageSrc,
+  mapImgSrc,
   tabs = [],
   onClick,
 }: VehicleOptionCardProps) => {
@@ -34,7 +36,7 @@ console.log("vehicle type",vehicleType)
   return (
     <div 
       className={`p-4 mt-4 rounded-lg border ${vehicleType===id ? 'border-2 border-black' : 'border-gray-200'} hover:bg-gray-100  cursor-pointer`}
-      onClick={()=>onClick(id)}
+      onClick={()=>onClick(id, mapImgSrc)}
     >
       <div className="flex  flex-row items-start justify-between">
         <div className="flex flex-col gap-2">

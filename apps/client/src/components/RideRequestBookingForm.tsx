@@ -13,10 +13,11 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { debounce } from "lodash";
 import PlaceSuggestDropdown from "./ui/PlaceSuggestDropDown/PlaceSuggestDropdown";
 import { useDispatch, useSelector } from "@repo/redux-store";
-import { setDestinationList, setPickUpList } from "@repo/redux-store/ride";
+import { setDestinationList, setDestinationlocationDisplayName, setPickUpList, setPickUplocationDisplayName } from "@repo/redux-store/ride";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "@repo/redux-store/store";
 import { getNearByVehicles } from "@repo/redux-store/socket";
+import { GetNearByVehiclesRides } from "@repo/redux-store/socket_schema";
 
 // interface DestinationSuggestion {
 //   name: string;
@@ -33,7 +34,7 @@ export default function RideRequestForm() {
   const {globalUser} = useSelector((state:RootState)=> state.globalUserAuthSlice)
   const formRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate()
-  const { pickupLocation: ridePickUpLocation, destinationLocation: rideDestinationLocation } = useSelector((state:RootState) => state.rideLocationReducer)
+  const {pickUpLocationName, destinationLocationName, pickupLocation: ridePickUpLocation, destinationLocation: rideDestinationLocation } = useSelector((state:RootState) => state.rideLocationReducer)
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["placesList"],
@@ -90,7 +91,7 @@ export default function RideRequestForm() {
         lat:rideDestinationLocation.lat,
         lon : rideDestinationLocation.lon
       }
-    }
+    } as GetNearByVehiclesRides
     //socket emitting dispatch
     dispatch(getNearByVehicles(payload))
     
@@ -108,10 +109,11 @@ export default function RideRequestForm() {
         <div className="relative">
           <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black" />
           <Input
-            value={pickupLocation}
+            value={pickUpLocationName}
             onChange={(e) => {
               setPickupLocation(e.target.value);
               handleInputChange(e.target.value, "pickup");
+              dispatch(setPickUplocationDisplayName(e.target.value))
             }}
             onFocus={() => setActiveInput("pickup")}
             className="font-uber h-14 pl-9 bg-muted/50 rounded-xl"
@@ -130,10 +132,12 @@ export default function RideRequestForm() {
         <div className="relative">
           <Circle className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black" />
           <Input
-            value={destinationLocation}
+            value={destinationLocationName}
             onChange={(e) => {
               setDestinationLocation(e.target.value);
               handleInputChange(e.target.value, "destination");
+              dispatch(setDestinationlocationDisplayName(e.target.value))
+
             }}
             onFocus={() => setActiveInput("destination")}
             className="font-uber h-14 pl-9 bg-muted/50 rounded-xl"
