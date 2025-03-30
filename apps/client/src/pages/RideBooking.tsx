@@ -3,8 +3,8 @@ import BookingFormContainer from "../components/BookingFormContainer";
 import RideRequestForm from "../components/RideRequestBookingForm";
 import { useDispatch, useSelector } from "@repo/redux-store";
 import { RootState } from "@repo/redux-store/store";
-import { useEffect,  useState } from "react";
-import L from "leaflet";
+import { useEffect, useState } from "react";
+import L, { icon } from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import "leaflet/dist/leaflet.css";
@@ -17,16 +17,26 @@ import { useMutation } from "@tanstack/react-query";
 import { getRideRoute } from "../api-client";
 import { setRoutePolyline } from "@repo/redux-store/ride";
 import { decode } from "@mapbox/polyline";
+import BookRideButton from "../components/BookRideButton";
+import { CaptainActive } from "@repo/redux-store/socket_schema";
+import VehicleMapMarker from "../components/ui/MapIcons/VehicleMapMarker";
 
-const Routing = ({ pickupLocation, destinationLocation }:{
+const Routing = ({
+  pickupLocation,
+  destinationLocation,
+}: {
   pickupLocation: { lat: number; lon: number; display_name: string };
   destinationLocation: { lat: number; lon: number; display_name: string };
-
 }) => {
   const map = useMap();
-  const [decodedCoordinates, setDecodedCoordinates] = useState<[number, number][]>([]);
+  const [decodedCoordinates, setDecodedCoordinates] = useState<
+    [number, number][]
+  >([]);
+  const {nearByVehicles}= useSelector((state:RootState)=> state.vehiclesReducers)
   const dispatch = useDispatch();
-  const route = useSelector((state: RootState) => state.rideLocationReducer.route);
+  const route = useSelector(
+    (state: RootState) => state.rideLocationReducer.route
+  );
 
   useEffect(() => {
     return () => {
@@ -41,13 +51,24 @@ const Routing = ({ pickupLocation, destinationLocation }:{
   useEffect(() => {
     if (route.data.polyline) {
       L.marker([pickupLocation.lat, pickupLocation.lon], {
-        icon: createTimeMarkerIcon(`${route.distanceString}`,pickupLocation.display_name, "pickup")
-      }).addTo(map);   
-      L.marker([destinationLocation.lat, destinationLocation.lon], {
-        icon: createTimeMarkerIcon(`${route.distanceString}`,destinationLocation.display_name, "destination")
+        icon: createTimeMarkerIcon(
+          `${route.distanceString}`,
+          pickupLocation.display_name,
+          "pickup"
+        ),
       }).addTo(map);
+      L.marker([destinationLocation.lat, destinationLocation.lon], {
+        icon: createTimeMarkerIcon(
+          `${route.distanceString}`,
+          destinationLocation.display_name,
+          "destination"
+        ),
+      }).addTo(map);
+
       try {
-        const decoded = decode(route.data.polyline).map(coord => [coord[0], coord[1]] as [number, number]);
+        const decoded = decode(route.data.polyline).map(
+          (coord) => [coord[0], coord[1]] as [number, number]
+        );
 
         setDecodedCoordinates(decoded);
         if (decoded.length > 0) {
@@ -55,7 +76,7 @@ const Routing = ({ pickupLocation, destinationLocation }:{
           map.fitBounds(bounds, { padding: [50, 50] });
         }
       } catch (error) {
-        console.error('Polyline decoding failed:', error);
+        console.error("Polyline decoding failed:", error);
       }
     }
   }, [route.data.polyline, map]);
@@ -68,35 +89,49 @@ const Routing = ({ pickupLocation, destinationLocation }:{
     });
     if (pickupLocation?.lat) {
       L.marker([pickupLocation.lat, pickupLocation.lon], {
-        icon: SquareMarker
+        icon: SquareMarker,
       }).addTo(map);
       map.flyTo([pickupLocation.lat, pickupLocation.lon], 14, {
         duration: 1.5,
-      });   
+      });
     }
-    
+
     if (destinationLocation?.lat) {
       L.marker([destinationLocation.lat, destinationLocation.lon], {
-        icon: SquareMarker
+        icon: SquareMarker,
       }).addTo(map);
       map.flyTo([destinationLocation.lat, destinationLocation.lon], 14, {
         duration: 1.5,
-      });   
+      });
     }
   }, [pickupLocation, destinationLocation, map]);
+
+  useEffect(()=>{
+    console.log("near by vehicles",nearByVehicles)
+    // nearbyVehicles showing on the maps 
+    if(nearByVehicles.length>0){
+    nearByVehicles.forEach((vehicle)=>{
+      return L.marker([vehicle.location.lat , vehicle.location.lon], {
+        icon: VehicleMapMarker(vehicle.data.vehicle.vehicleImage)
+      }).addTo(map);
+    })
+    }
+}, [nearByVehicles , route.data.polyline])
+
 
   return decodedCoordinates.length > 0 ? (
     <Polyline
       positions={decodedCoordinates}
-      pathOptions={{ color: '#000000', weight: 4 }}
+      pathOptions={{ color: "#000000", weight: 4 }}
     />
   ) : null;
 };
 
+
 const RideBooking = () => {
   const dispatch = useDispatch();
   const [error, setError] = useState<string | null>(null);
-  
+
   const { pickupLocation, destinationLocation } = useSelector(
     (state: RootState) => state.rideLocationReducer
   );
@@ -106,14 +141,15 @@ const RideBooking = () => {
 
   const { mutate } = useMutation({
     mutationKey: ["getRideRoute"],
-    mutationFn: (params: { pickup: any; destination: any }) => getRideRoute(params.pickup, params.destination),
+    mutationFn: (params: { pickup: any; destination: any }) =>
+      getRideRoute(params.pickup, params.destination),
     onSuccess: (data) => {
-      console.log("route data",data)
+      console.log("route data", data);
       dispatch(setRoutePolyline(data));
     },
     onError: (error) => {
-      console.error('Failed to get route:', error);
-    }
+      console.error("Failed to get route:", error);
+    },
   });
 
   useEffect(() => {
@@ -144,19 +180,23 @@ const RideBooking = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (pickupLocation?.lat && pickupLocation?.lon && destinationLocation?.lat && destinationLocation?.lon) {
+    if (
+      pickupLocation?.lat &&
+      pickupLocation?.lon &&
+      destinationLocation?.lat &&
+      destinationLocation?.lon
+    ) {
       const pickup = {
         latitude: pickupLocation.lat,
-        longitude: pickupLocation.lon
+        longitude: pickupLocation.lon,
       };
       const destination = {
         latitude: destinationLocation.lat,
-        longitude: destinationLocation.lon
+        longitude: destinationLocation.lon,
       };
       mutate({ pickup, destination });
     }
   }, [pickupLocation, destinationLocation, mutate]);
-
   return (
     <>
       <BookingFormContainer children={[]} />
@@ -166,7 +206,7 @@ const RideBooking = () => {
             <RideRequestForm />
           </div>
           <div className="md:col-span-6 md:space-x-2 lg:col-span-5">
-            <ChooseYourRide />
+            <ChooseYourRide />  
           </div>
           <div className="z-0 md:col-span-6 lg:col-span-4 min-h-screen">
             {location.lat && location.long ? (
@@ -180,18 +220,20 @@ const RideBooking = () => {
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <Routing
-                  pickupLocation={pickupLocation as {
-                    lat: number;
-                    lon: number;
-                    display_name: string;
+                  pickupLocation={
+                    pickupLocation as {
+                      lat: number;
+                      lon: number;
+                      display_name: string;
+                    }
                   }
-}
-                  destinationLocation={destinationLocation as {
-                    lat: number;
-                    lon: number;
-                    display_name: string;
+                  destinationLocation={
+                    destinationLocation as {
+                      lat: number;
+                      lon: number;
+                      display_name: string;
+                    }
                   }
-}
                 />
               </MapContainer>
             ) : (

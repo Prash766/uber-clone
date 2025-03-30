@@ -45,7 +45,8 @@ const initialState = {
   driverLicenseState: "",
   driverLicenseExpiry: "",
   vehicleType: "", 
-  vehicleNumber:""
+  vehicleNumber:"",
+  vehicleImage:""
 };
 
 const captainRegistration = createSlice({
@@ -59,6 +60,9 @@ const captainRegistration = createSlice({
 
     setVehicleDetails : (state , action)=>{
       state = {...state, ...action.payload}
+    },
+    setVehicleImage : (state , action)=>{
+      state.vehicleImage = action.payload
     }
 
     
@@ -107,7 +111,7 @@ const captainDetails = createSlice({
   }
 })
 
-export const {  setVehicleType , setVehicleDetails } =
+export const {  setVehicleType , setVehicleDetails , setVehicleImage } =
   captainRegistration.actions;
 export const {setEmailandId , setCaptainRegistration} = captainDetails.actions
 export const captainRegistrationReducer=   captainRegistration.reducer

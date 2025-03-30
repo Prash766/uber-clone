@@ -11,17 +11,19 @@ export function useAuth() {
     (state: RootState) => state.globalUserAuthSlice
   );
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isSuccess } = useQuery({
     queryKey: ["userAuthCheck"],
     queryFn: authorizeUserCheck,
-    staleTime: 5 * 60 * 1000, 
   });
 
   useEffect(() => {
-    if (data) {
+    console.log("runnig useAuth")
+    console.log("data",data)
+    if (isSuccess) {
+      console.log("useAuth data",data)
       dispatch(setGlobalUserAuth(data));
     }
-  }, [data, dispatch]);
+  }, [data, dispatch , isSuccess]);
 
   return {
     globalUser,

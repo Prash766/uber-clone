@@ -6,6 +6,7 @@ import {captainRegistrationReducer , captainDetailsReducer} from '../src/slice/C
 import {placeListReducer, rideLocationReducer} from '../src/slice/Ride'
 import {socketReducer}  from './slice/Socket'
 import socketMiddleware from './middleware/socketMiddleware'
+import vehiclesReducers from './slice/Vehicles'
 
 export const store = configureStore({
   reducer: {
@@ -18,7 +19,9 @@ export const store = configureStore({
     rideLocationReducer,
     captainRegistrationReducer,
     captainDetailsReducer,
-    socketReducer
+    socketReducer,
+    vehiclesReducers
+
   
   },
 middleware(getDefaultMiddleware) {
