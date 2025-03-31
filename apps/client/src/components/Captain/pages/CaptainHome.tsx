@@ -31,6 +31,7 @@ const CaptainHome = () => {
       const intervalId = setInterval(() => {
         navigator.geolocation.getCurrentPosition(
           (location) => {
+            console.log("location",location)
             const locationData = {
               captainId: globalUser.data.captain.id,
               location: {

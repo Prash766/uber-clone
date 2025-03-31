@@ -17,9 +17,10 @@ import { useMutation } from "@tanstack/react-query";
 import { getRideRoute } from "../api-client";
 import { setRoutePolyline } from "@repo/redux-store/ride";
 import { decode } from "@mapbox/polyline";
-import BookRideButton from "../components/BookRideButton";
-import { CaptainActive } from "@repo/redux-store/socket_schema";
 import VehicleMapMarker from "../components/ui/MapIcons/VehicleMapMarker";
+import "leaflet-rotatedmarker";
+import { SocketLocationType } from "@repo/redux-store/socket_schema";
+
 
 const Routing = ({
   pickupLocation,
@@ -106,17 +107,54 @@ const Routing = ({
     }
   }, [pickupLocation, destinationLocation, map]);
 
-  useEffect(()=>{
-    console.log("near by vehicles",nearByVehicles)
-    // nearbyVehicles showing on the maps 
-    if(nearByVehicles.length>0){
-    nearByVehicles.forEach((vehicle)=>{
-      return L.marker([vehicle.location.lat , vehicle.location.lon], {
-        icon: VehicleMapMarker(vehicle.data.vehicle.vehicleImage)
+//   useEffect(()=>{
+//     console.log("near by vehicles",nearByVehicles)
+//     // nearbyVehicles showing on the maps 
+//     if(nearByVehicles.length>0){
+//     nearByVehicles.forEach((vehicle)=>{
+//       return L.marker([vehicle.location.latitude , vehicle.location.longitude], {
+//         icon: VehicleMapMarker(vehicle.data.vehicle.vehicleImage)
+//       }).addTo(map);
+//     })
+//     }
+// }, [nearByVehicles , route.data.polyline])
+
+function calculateRotationAngle(prevPos: SocketLocationType, newPos :SocketLocationType) {
+  if (!prevPos) return 0; // If there’s no previous position, default to 0
+
+  const deltaLat = newPos.latitude - prevPos.latitude;
+  const deltaLng = newPos.longitude - prevPos.longitude;
+
+  const angleRad = Math.atan2(deltaLng, deltaLat);
+  // Convert radians to degrees
+  const angleDeg = angleRad * (180 / Math.PI);
+
+  return angleDeg;
+}
+
+useEffect(() => {
+  if (nearByVehicles.length > 0) {
+    nearByVehicles.forEach((vehicle) => {
+      // Get the current location
+      const currentLocation = {
+        latitude: vehicle.location.latitude ,
+        longitude: vehicle.location.longitude 
+      };
+
+      // Calculate the rotation angle using a stored previous location
+      const rotationAngle = calculateRotationAngle(vehicle.prevLocation, currentLocation);
+
+      // Add or update the marker with rotation
+      console.log("roation angle",rotationAngle)
+      L.marker([currentLocation.latitude, currentLocation.longitude], {
+        icon: VehicleMapMarker(vehicle.data.vehicle.vehicleImage),
+        rotationAngle, // rotation in degrees
+        rotationOrigin: 'center',
       }).addTo(map);
-    })
-    }
-}, [nearByVehicles , route.data.polyline])
+    });
+  }
+}, [nearByVehicles, map]);
+
 
 
   return decodedCoordinates.length > 0 ? (

@@ -15,8 +15,8 @@ const checkAndBatchLocationUpdate = (
     console.log("PREV AND NEW LOCATION",prevLocation , newLocation)
     const locationDiff = geoLib.getDistance(prevLocation, newLocation)
     console.log("location diff" , locationDiff)
-    if (locationDiff > LOCATION_UPDATE_THRESHOLD) {
-        // if (locationDiff!==Number.NaN ) {
+    // if (locationDiff > LOCATION_UPDATE_THRESHOLD) {
+        if (locationDiff!==Number.NaN ) {
         updatedCaptainLocation.set(captain_id  ,{
             captainId: captain_id,
             coordinates: {
@@ -41,7 +41,8 @@ const getNearByVehicles= (socket:Socket)=>{
     const worker = new Worker('./src/services/workers/nearby_rides.worker.js', {workerData:{captainInfo : captainDetails , userRideLocationDetails: userRequestRideLocation }})
 
     worker.on("message", (data)=>{
-        nearByCaptains= [...data]
+        nearByCaptains= [...data.result]
+        console.log("near by captains",nearByCaptains)
         console.log("socket id",socket.id)
         socket.emit(SocketEvent.getRides, nearByCaptains)
     }) 

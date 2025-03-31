@@ -139,7 +139,7 @@ socket.on(CaptainSocketEvent.captainLocationUpdate , (data)=>{
     const updatedCaptainLocationObject = {...activeCaptainsDetails.get(captain_id)?.location ,...data.location }
     activeCaptainsDetails.set(
       captain_id , 
-      ({...activeCaptainsDetails.get(captain_id) ,location : updatedCaptainLocationObject} as CaptainActive)
+      ({...activeCaptainsDetails.get(captain_id) ,location : updatedCaptainLocationObject , prevLocation: prevCaptainLocation} as CaptainActive)
     )
     const latestCaptainLocation = activeCaptainsDetails.get(captain_id)?.location
     if(prevCaptainLocation &&  latestCaptainLocation){

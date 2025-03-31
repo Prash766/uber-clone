@@ -1,6 +1,7 @@
 export type CaptainActive= {
     captainId: number,
-    location:SocketLocationType
+    location:SocketLocationType,
+    prevLocation:SocketLocationType
     data:{
         captain:{
             id:number,

@@ -4,8 +4,8 @@ type Override<T, O extends { [F in keyof Partial<T>]: unknown }> = Omit<T, keyof
 
 type IModified = Override<CaptainActive, { 
   location: { 
-    lat: number;
-    lon: number;
+    latitude: number;
+    longitude: number;
   } 
 }>;
 
